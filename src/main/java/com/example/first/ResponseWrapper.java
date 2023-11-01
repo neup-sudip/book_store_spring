@@ -1,25 +1,25 @@
-package com.example.first.user;
+package com.example.first;
 
 public class ResponseWrapper {
 
-    private Object resBody;
+    private Object data;
 
     private int status;
 
     private String message;
 
-    public ResponseWrapper(Object resBody, int status, String message) {
-        this.resBody = resBody;
+    public ResponseWrapper(Object data, int status, String message) {
+        this.data = data;
         this.status = status;
         this.message = message;
     }
 
-    public Object getResBody() {
-        return resBody;
+    public Object getData() {
+        return data;
     }
 
-    public void setResBody(Object resBody) {
-        this.resBody = resBody;
+    public void setData(Object data) {
+        this.data = data;
     }
 
     public int getStatus() {

@@ -1,5 +1,6 @@
 package com.example.first.book;
 
+import com.example.first.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,49 +11,40 @@ import java.util.List;
 @RequestMapping("/books")
 public class BookController {
 
+    private final BookService bookService;
+
     @Autowired
-    private BookRepository bookRepository;
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
 
     @GetMapping()
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+    public ResponseWrapper getAllBooks() {
+        return bookService.getAllBooks();
+    }
+
+    @GetMapping("/book")
+    public ResponseWrapper getBookByTitle(@RequestParam String title){
+        return bookService.getBookByTitle(title);
     }
 
     @GetMapping("/{id}")
-    public Book getSingleBook(@PathVariable Long id) {
-        return bookRepository.findById(id).orElse(null);
+    public ResponseWrapper getSingleBook(@PathVariable long id) {
+        return bookService.getBookById(id);
     }
 
     @PostMapping()
-    public Book addBook(@RequestBody Book book) {
-        return bookRepository.save(book);
+    public ResponseWrapper addBook(@RequestBody Book book) {
+        return bookService.addBook(book);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> editBook(@PathVariable Long id, @RequestBody Book newBook) {
-        Book book = bookRepository.findById(id).orElse(null);
-
-        if (book != null) {
-            book.setAuthor(newBook.getAuthor());
-            book.setGenre(newBook.getGenre());
-            book.setTitle(newBook.getTitle());
-            book.setPrice(newBook.getPrice());
-
-            return ResponseEntity.ok(bookRepository.save(book));
-        } else {
-            return ResponseEntity.ok(null);
-        }
+    public ResponseWrapper editBook(@PathVariable long id, @RequestBody Book newBook) {
+        return  bookService.editBook(id, newBook);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteBook(@PathVariable Long id){
-        Book book = bookRepository.findById(id).orElse(null);
-
-        if(book == null){
-            return "Book with " + id + " not found";
-        }else{
-            bookRepository.deleteById(id);
-            return "Successfully deleted";
-        }
+    public ResponseWrapper deleteBook(@PathVariable long id){
+       return bookService.deleteBook(id);
     }
 }
