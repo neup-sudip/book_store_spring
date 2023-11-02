@@ -1,6 +1,6 @@
 package com.example.first.inmemoryuser;
 
-import com.example.first.ResponseWrapper;
+import com.example.first.utils.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,21 +17,6 @@ public class InMemoryUserController {
     @GetMapping()
     public List<InMemoryUser> getUsers(){
         return inMemoryUserServices.getAllUsers();
-    }
-
-    @GetMapping("/test")
-    public ResponseWrapper test(){
-        return new ResponseWrapper(null, 200, "Success");
-    }
-
-    @GetMapping("/test1")
-    public ResponseWrapper test1(){
-        return new ResponseWrapper(new InMemoryUser("user1", "user1"), 200, "Success");
-    }
-
-    @GetMapping("/test2")
-    public ResponseWrapper test2(){
-        return new ResponseWrapper(List.of(new InMemoryUser("user1", "user1"), new InMemoryUser("user2", "user2")), 200, "Success");
     }
 
     @GetMapping("/{username}")

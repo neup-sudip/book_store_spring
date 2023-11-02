@@ -15,6 +15,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long user_id;
 
+
     @Column(name= "username", unique = true, nullable = false)
     private String username;
 
@@ -35,6 +36,14 @@ public class User {
         this.password = password;
         this.email = email;
         this.role = role;
+    }
+
+    public long getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(long user_id) {
+        this.user_id = user_id;
     }
 
     public String getUsername() {

@@ -1,8 +1,13 @@
 package com.example.first.user;
 
-import com.example.first.ResponseWrapper;
+import com.example.first.utils.CustomException;
+import com.example.first.utils.ResponseData;
+import com.example.first.utils.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class UserService {
@@ -14,40 +19,39 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public ResponseWrapper getUsers(){
-        return new ResponseWrapper(userRepository.findAll(), 200, "All users fetched !");
+    public ResponseWrapper getUsers() {
+        ResponseData res = new ResponseData(userRepository.findAll(),"All users fetched");
+        return new ResponseWrapper(res, 200);
     }
 
-    public ResponseWrapper getUserById(long id){
-        boolean exist = userRepository.existsById(id);
-
-        if(exist){
-            return new ResponseWrapper(userRepository.findById(id), 200, "User fetched successfully");
-        }else{
-            return new ResponseWrapper(null, 404, "User not Found !");
-        }
+    public User getUserById(long id) {
+        return userRepository.findById(id).orElse(null);
     }
 
-    public User addNewUser(User user){
+    public User addNewUser(User user) {
+
         User emailOrUsernameExist = userRepository.findByEmailOrUsername(user.getEmail(), user.getUsername());
-        if(emailOrUsernameExist != null){
-            return null;
+
+        if (emailOrUsernameExist != null) {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("username", "User Name is taken");
+            throw new CustomException(errors);
         }
 
         User newUser = userRepository.save(user);
         return newUser;
     }
 
-    public  ResponseWrapper updateUser(User user, long id){
+    public ResponseWrapper updateUser(User user, long id) {
         User prevUser = userRepository.findById(id).orElse(null);
 
-        if(prevUser == null){
-            return new ResponseWrapper(null, 400, "User not found !");
+        if (prevUser == null) {
+            return new ResponseWrapper(new ResponseData(null, "User not found !"), 400);
         }
 
         User emailOrUsernameExist = userRepository.findByNotIdAndEmailOrUsername(id, user.getEmail(), user.getUsername());
-        if(emailOrUsernameExist != null){
-            return new ResponseWrapper(null, 400, "Email/Username already exist !");
+        if (emailOrUsernameExist != null) {
+            return new ResponseWrapper(new ResponseData(null, "Email/Username already exist !"), 400);
         }
 
         prevUser.setRole(user.getRole());
@@ -55,6 +59,6 @@ public class UserService {
         prevUser.setUsername(user.getUsername());
         prevUser.setPassword(user.getPassword());
 
-        return new ResponseWrapper(prevUser, 200, "User updated successfully !");
+        return new ResponseWrapper(new ResponseData(prevUser, "User updated successfully !"), 200);
     }
 }

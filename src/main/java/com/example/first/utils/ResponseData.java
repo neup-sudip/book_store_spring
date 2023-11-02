@@ -1,16 +1,19 @@
-package com.example.first;
+package com.example.first.utils;
 
-public class ResponseWrapper {
-
+public class ResponseData {
     private Object data;
-
-    private int status;
 
     private String message;
 
-    public ResponseWrapper(Object data, int status, String message) {
+    public ResponseData() {
+    }
+
+    public ResponseData(Object data) {
         this.data = data;
-        this.status = status;
+    }
+
+    public ResponseData(Object data, String message) {
+        this.data = data;
         this.message = message;
     }
 
@@ -20,14 +23,6 @@ public class ResponseWrapper {
 
     public void setData(Object data) {
         this.data = data;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
     }
 
     public String getMessage() {

@@ -1,6 +1,7 @@
 package com.example.first.user;
 
-import com.example.first.ResponseWrapper;
+import com.example.first.utils.ResponseData;
+import com.example.first.utils.ResponseWrapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,21 +25,26 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseWrapper createUser(@Valid @RequestBody UserRequestDto userReqDto) {
-        User newUser = new User(userReqDto.getUsername(),userReqDto.getPassword(), userReqDto.getEmail(), userReqDto.getRole());
+        User.ROLE role = User.ROLE.valueOf(userReqDto.getRole());
 
-        User user =  userService.addNewUser(newUser);
+        User newUser = new User(userReqDto.getUsername(), userReqDto.getPassword(), userReqDto.getEmail(), role);
 
-        if(user == null){
-            return new ResponseWrapper(null,406, "Email/Username already exist !" );
-        }else {
-            UserResponseDto resUser = new UserResponseDto(user.getUsername(), user.getEmail(), user.getRole());
-            return new ResponseWrapper(resUser, 200, "User created successfully !");
-        }
+        User user = userService.addNewUser(newUser);
+
+        UserResponseDto resUser = new UserResponseDto(user.getUsername(), user.getEmail(), user.getRole());
+        return new ResponseWrapper(new ResponseData(resUser, "User created successfully !"), 200);
     }
 
     @GetMapping("/{id}")
     public ResponseWrapper getUserById(@PathVariable long id) {
-        return userService.getUserById(id);
+        User user = userService.getUserById(id);
+
+        if (user == null) {
+            return new ResponseWrapper(new ResponseData(null, "User not found !"), 404);
+        } else {
+            UserResponseDto resUser = new UserResponseDto(user.getUsername(), user.getEmail(), user.getRole());
+            return new ResponseWrapper(new ResponseData(resUser, "User fetched successfully"), 200);
+        }
     }
 
     @PutMapping("/{id}")
