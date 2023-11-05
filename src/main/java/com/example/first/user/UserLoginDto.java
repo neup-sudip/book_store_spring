@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public class UserRequestDto {
+public class UserLoginDto {
 
     @NotEmpty(message = "Username is required !")
     @Pattern(regexp = "^[A-Za-z][A-Za-z0-9_]{7,29}$", message = "username should be 8-30 char long, only include letter, number and _")
@@ -15,22 +15,13 @@ public class UserRequestDto {
     @Size(min = 8, message = "password should have at least 8 characters")
     private String password;
 
-    @NotEmpty(message = "Email is required !")
-    @Email(message = "Invalid email type !")
-    private String email;
 
-    @NotEmpty(message = "Role is required !")
-    @Pattern(regexp = "^(ADMIN|USER)$", message = "Invalid user type !")
-    private String role;
-
-    public UserRequestDto() {
+    public UserLoginDto() {
     }
 
-    public UserRequestDto(String username, String password, String email, String role) {
+    public UserLoginDto(String username, String password) {
         this.username = username;
         this.password = password;
-        this.email = email;
-        this.role = role;
     }
 
     public String getUsername() {
@@ -49,19 +40,4 @@ public class UserRequestDto {
         this.password = password;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 }

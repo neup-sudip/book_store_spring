@@ -5,7 +5,7 @@
 //import org.springframework.web.bind.annotation.*;
 //
 //@RestController
-//@RequestMapping("/books")
+//@RequestMapping("/api/books")
 //public class BookController {
 //
 //    private final BookService bookService;

@@ -1,20 +1,21 @@
 package com.example.first.user;
 
+import com.example.first.book.Book;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
 public class User {
 
-    static enum ROLE {
+    public static enum ROLE {
         USER,
         ADMIN
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long user_id;
-
+    @Column(name= "user_id")
+    private long userId;
 
     @Column(name= "username", unique = true, nullable = false)
     private String username;
@@ -26,24 +27,24 @@ public class User {
     private String email;
 
     @Column(name = "role", nullable = false)
-    private ROLE role;
+    private String role;
 
     public User() {
     }
 
-    public User(String username, String password, String email, ROLE role) {
+    public User(String username, String password, String email, String role) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
     }
 
-    public long getUser_id() {
-        return user_id;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setUser_id(long user_id) {
-        this.user_id = user_id;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
@@ -70,11 +71,11 @@ public class User {
         this.email = email;
     }
 
-    public ROLE getRole() {
+    public String  getRole() {
         return role;
     }
 
-    public void setRole(ROLE role) {
+    public void setRole(String  role) {
         this.role = role;
     }
 }

@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -19,9 +21,8 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public ResponseWrapper getUsers() {
-        ResponseData res = new ResponseData(userRepository.findAll(),"All users fetched");
-        return new ResponseWrapper(res, 200);
+    public List<User> getUsers() {
+        return userRepository.findAll();
     }
 
     public User getUserById(long id) {
@@ -38,27 +39,36 @@ public class UserService {
             throw new CustomException(errors);
         }
 
-        User newUser = userRepository.save(user);
-        return newUser;
+        return userRepository.save(user);
     }
 
     public ResponseWrapper updateUser(User user, long id) {
         User prevUser = userRepository.findById(id).orElse(null);
 
         if (prevUser == null) {
-            return new ResponseWrapper(new ResponseData(null, "User not found !"), 400);
+            return new ResponseWrapper(new ResponseData(null, "User not found !", false), 400);
         }
 
         User emailOrUsernameExist = userRepository.findByNotIdAndEmailOrUsername(id, user.getEmail(), user.getUsername());
         if (emailOrUsernameExist != null) {
-            return new ResponseWrapper(new ResponseData(null, "Email/Username already exist !"), 400);
+            return new ResponseWrapper(new ResponseData(null, "Email/Username already exist !", false), 400);
         }
 
         prevUser.setRole(user.getRole());
         prevUser.setEmail(user.getEmail());
         prevUser.setUsername(user.getUsername());
         prevUser.setPassword(user.getPassword());
+        userRepository.save(prevUser);
 
-        return new ResponseWrapper(new ResponseData(prevUser, "User updated successfully !"), 200);
+        return new ResponseWrapper(new ResponseData(prevUser, "User updated successfully !", true), 200);
+    }
+
+    public User login(String username, String password){
+
+        return userRepository.findByUsernameAndPassword(username, password);
+    }
+
+    public User getByUsername(String username){
+        return userRepository.findByUsername(username);
     }
 }

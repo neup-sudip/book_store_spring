@@ -28,13 +28,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             errors.put(errorTitle, errorMessage);
         });
 
-        ResponseData res = new ResponseData(errors, "Error !");
+        ResponseData res = new ResponseData(errors, "Error !", false);
         return new ResponseWrapper(res, 400);
     }
 
     @ExceptionHandler(CustomException.class)
     public ResponseWrapper handleCustomException(CustomException exception){
-        ResponseData res = new ResponseData(exception.getErrors(), "Error !");
+        ResponseData res = new ResponseData(exception.getErrors(), "Error !", false);
         return new ResponseWrapper(res, 400);
     }
 

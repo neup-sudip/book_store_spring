@@ -5,6 +5,7 @@ public class ResponseData {
 
     private String message;
 
+    private boolean result;
     public ResponseData() {
     }
 
@@ -12,9 +13,10 @@ public class ResponseData {
         this.data = data;
     }
 
-    public ResponseData(Object data, String message) {
+    public ResponseData(Object data, String message, boolean result) {
         this.data = data;
         this.message = message;
+        this.result = result;
     }
 
     public Object getData() {

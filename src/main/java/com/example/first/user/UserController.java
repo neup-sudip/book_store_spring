@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
@@ -20,19 +20,20 @@ public class UserController {
 
     @GetMapping()
     public ResponseWrapper getAllUsers() {
-        return userService.getUsers();
+        ResponseData res = new ResponseData(userService.getUsers(),"All users fetched", true);
+        return new ResponseWrapper(res, 200);
     }
 
     @PostMapping("/register")
-    public ResponseWrapper createUser(@Valid @RequestBody UserRequestDto userReqDto) {
-        User.ROLE role = User.ROLE.valueOf(userReqDto.getRole());
+    public ResponseWrapper createUser(@Valid @RequestBody NewUserReqDto userReqDto) {
 
-        User newUser = new User(userReqDto.getUsername(), userReqDto.getPassword(), userReqDto.getEmail(), role);
+        User newUser = new User(userReqDto.getUsername(), userReqDto.getPassword(), userReqDto.getEmail(), userReqDto.getRole());
 
         User user = userService.addNewUser(newUser);
+        User.ROLE role = User.ROLE.valueOf(user.getRole());
 
-        UserResponseDto resUser = new UserResponseDto(user.getUsername(), user.getEmail(), user.getRole());
-        return new ResponseWrapper(new ResponseData(resUser, "User created successfully !"), 200);
+        UserResponseDto resUser = new UserResponseDto(user.getUsername(), user.getEmail(), role);
+        return new ResponseWrapper(new ResponseData(resUser, "User created successfully !", true), 200);
     }
 
     @GetMapping("/{id}")
@@ -40,10 +41,11 @@ public class UserController {
         User user = userService.getUserById(id);
 
         if (user == null) {
-            return new ResponseWrapper(new ResponseData(null, "User not found !"), 404);
+            return new ResponseWrapper(new ResponseData(null, "User not found !", false), 404);
         } else {
-            UserResponseDto resUser = new UserResponseDto(user.getUsername(), user.getEmail(), user.getRole());
-            return new ResponseWrapper(new ResponseData(resUser, "User fetched successfully"), 200);
+            User.ROLE role = User.ROLE.valueOf(user.getRole());
+            UserResponseDto resUser = new UserResponseDto(user.getUsername(), user.getEmail(), role);
+            return new ResponseWrapper(new ResponseData(resUser, "User fetched successfully", true), 200);
         }
     }
 
