@@ -5,10 +5,13 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/users")
@@ -41,12 +44,13 @@ public class UserControllerUi {
             return "redirect:/users";
         }else {
             model.addAttribute("user", user);
-            return "edituser";
+            return "adduser";
         }
     }
 
     @PostMapping("/edit/{username}")
     public String editUser(@Valid @ModelAttribute NewUserReqDto user, @PathVariable String username, Model model){
+
         User newUser = new User(user.getUsername(), user.getPassword(), user.getEmail(), user.getRole());
 
         User exist = userService.getByUsername(username);

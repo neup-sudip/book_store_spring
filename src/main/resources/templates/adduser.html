@@ -1,28 +1,50 @@
 <!DOCTYPE HTML>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Add User</title>
+    <title>User</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
 </head>
-<body>
-<h1>Add User</h1>
-<form th:action="@{/users/register}" method="post" th:object="${newUser}">
+<body class="container mt-5">
+<h1 th:if="${user != null}" >Update User</h1>
+<h1 th:if="${user == null}" >Add User</h1>
+
+<p th:if="${errors != null && errors?.username != null}" th:text="${errors.username}"></p>
+
+<form th:action="${user != null} ? @{/users/edit/{username}(username=${user.username})} : @{/users/register}" method="post" th:object="${newUser}">
+    <div class="form-group mb-2">
     <label for="username">Username: </label>
-    <input type="text" name="username" />
+    <input type="text" name="username" th:value="${user != null && user.username != null} ? ${user.username} : ''" class="form-control" th:classappend="${errors?.username != null} ? 'is-invalid' : ''" />
+        <div th:if="${errors != null && errors.username != null}" th:text="${errors?.username}" class="invalid-feedback">
+        </div>
+    </div>
 
+    <div class="form-group mb-2">
     <label for="password">Password: </label>
-    <input type="password" name="password" />
+    <input type="password" name="password" th:value="${user != null && user.password != null} ? ${user.password} : ''" class="form-control" th:classappend="${errors != null && errors?.password != null} ? is-invalid : ''"/>
+        <div th:if="${errors != null && errors?.password != null}" th:text="${errors.password}" class="invalid-feedback">
+        </div>
+    </div>
 
+    <div class="form-group mb-2">
     <label for="email">Email: </label>
-    <input type="email" name="email" />
+    <input type="email" name="email" th:value="${user != null && user.email != null} ? ${user.email} : ''" class="form-control" th:classappend="${errors != null && errors?.email != null} ? is-invalid : ''"/>
+        <div th:if="${errors != null && errors?.email != null}" th:text="${errors.email}" class="invalid-feedback">
+        </div>
+    </div>
 
+    <div class="form-group mb-2">
     <label for="role">Role: </label>
-    <select name="role">
-        <option value="ADMIN">ADMIN</option>
-        <option value="USER">USER</option>
+    <select name="role" class="form-control">
+        <option value="ADMIN" th:if="${user == null || user?.role == 'ADMIN'}">ADMIN</option>
+        <option value="USER" th:if="${user == null || user?.role == 'USER'}">USER</option>
     </select>
 
-    <button type="submit">Submit</button>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
 </body>
