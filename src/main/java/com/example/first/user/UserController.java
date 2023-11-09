@@ -6,6 +6,9 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -17,10 +20,14 @@ public class UserController {
         this.userService = userService;
     }
 
-
     @GetMapping()
     public ResponseWrapper getAllUsers() {
-        ResponseData res = new ResponseData(userService.getUsers(),"All users fetched", true);
+        List<User> users = userService.getUsers();
+        List<UserResponseDto> resUser = new ArrayList<>();
+        for (User user :  users){
+            resUser.add(new UserResponseDto(user.getUsername(), user.getEmail(), User.ROLE.valueOf(user.getRole())));
+        }
+        ResponseData res = new ResponseData(resUser,"All users fetched", true);
         return new ResponseWrapper(res, 200);
     }
 
