@@ -1,13 +1,12 @@
 package com.example.first.utils;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.ui.Model;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -21,6 +20,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  {
     protected ResponseWrapper handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
                                                                   HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         Map<String, String> errors = new HashMap<>();
+        System.out.println("error");
 
         exception.getBindingResult().getAllErrors().forEach(error -> {
             String errorTitle = ((FieldError) error).getField();
@@ -55,10 +55,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  {
 //        }
 //    }
 
-
-    @ExceptionHandler(CustomException.class)
+    @ExceptionHandler(Exception.class)
     public ResponseWrapper handleCustomException(CustomException exception){
-        ResponseData res = new ResponseData(exception.getErrors(), "Error !", false);
+        System.out.println("Error");
+        ResponseData res = new ResponseData(null, exception.getMessage(), false);
         return new ResponseWrapper(res, 400);
     }
 

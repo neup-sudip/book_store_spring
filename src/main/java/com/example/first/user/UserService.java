@@ -34,9 +34,7 @@ public class UserService {
         User emailOrUsernameExist = userRepository.findByEmailOrUsername(user.getEmail(), user.getUsername());
 
         if (emailOrUsernameExist != null) {
-            Map<String, String> errors = new HashMap<>();
-            errors.put("username", "User Name is taken");
-            throw new CustomException(errors);
+            throw new CustomException("User Name is taken");
         }
 
         return userRepository.save(user);
