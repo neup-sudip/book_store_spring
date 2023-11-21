@@ -30,7 +30,6 @@ public class UserService {
     }
 
     public User addNewUser(User user) {
-
         User emailOrUsernameExist = userRepository.findByEmailOrUsername(user.getEmail(), user.getUsername());
 
         if (emailOrUsernameExist != null) {
@@ -62,7 +61,6 @@ public class UserService {
     }
 
     public User login(String username, String password){
-
         return userRepository.findByUsernameAndPassword(username, password);
     }
 

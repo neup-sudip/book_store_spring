@@ -55,7 +55,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  {
 //        }
 //    }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(CustomException.class)
     public ResponseWrapper handleCustomException(CustomException exception){
         System.out.println("Error");
         ResponseData res = new ResponseData(null, exception.getMessage(), false);
