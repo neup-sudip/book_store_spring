@@ -7,7 +7,8 @@ import jakarta.persistence.*;
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long book_id;
+    @Column(name = "book_id")
+    private long bookId;
 
     @Column(name = "title")
     private String title;
@@ -65,6 +66,7 @@ public class Book {
     public void setPrice(double price) {
         this.price = price;
     }
+
 
     public boolean isAvailable() {
         return available;

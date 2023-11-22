@@ -20,7 +20,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  {
     protected ResponseWrapper handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
                                                                   HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         Map<String, String> errors = new HashMap<>();
-        System.out.println("error");
 
         exception.getBindingResult().getAllErrors().forEach(error -> {
             String errorTitle = ((FieldError) error).getField();
@@ -57,7 +56,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  {
 
     @ExceptionHandler(CustomException.class)
     public ResponseWrapper handleCustomException(CustomException exception){
-        System.out.println("Error");
         ResponseData res = new ResponseData(null, exception.getMessage(), false);
         return new ResponseWrapper(res, 400);
     }

@@ -1,61 +1,5 @@
 package com.example.first.utils;
 
-//import io.jsonwebtoken.*;
-//import io.jsonwebtoken.security.SignatureException;
-//import jakarta.servlet.FilterChain;
-//import jakarta.servlet.ServletException;
-//import jakarta.servlet.http.HttpServletRequest;
-//import jakarta.servlet.http.HttpServletResponse;
-//import org.springframework.web.filter.OncePerRequestFilter;
-//
-//import java.io.IOException;
-//import java.util.Date;
-//import java.util.HashMap;
-//import java.util.Map;
-//
-//public class JwtConfig extends OncePerRequestFilter {
-//    private static final String secretKey = "key";
-//    private static final long expirationTime = 864_000_000;
-//
-//    @Override
-//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//        String token = request.getHeader("Authorization");
-//
-//        if(token == null){
-//            System.out.println("no token");
-////            throw new CustomException("No token");
-//            filterChain.doFilter(request, response);
-//        }
-//
-//        System.out.println("hello");
-//        try {
-//            if ( !(Jwts.parser().setSigningKey(secretKey).build().parseEncryptedClaims(token).getPayload() == null)) {
-//                filterChain.doFilter(request, response);
-//            }
-//        } catch (JwtException e) {
-//            System.out.println("token error");
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//            response.getWriter().write("Unauthorized");
-//        }
-//    }
-//
-//    // Example JWT generation
-//    public String generateToken(String username) {
-//        return Jwts.builder()
-//                .setSubject(username)
-//                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-//                .signWith(SignatureAlgorithm.HS512, secretKey)
-//                .compact();
-//    }
-//
-//    // Example JWT validation
-//    public boolean validateToken(String token) {
-//       return  false;
-//    }
-//
-//}
-//
-
 import com.example.first.user.User;
 import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
@@ -63,15 +7,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.security.Key;
-import java.security.SignatureException;
 import java.util.Date;
+import java.util.Map;
 
 public class JwtConfig extends OncePerRequestFilter {
 
@@ -84,7 +26,7 @@ public class JwtConfig extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        if (request.getServletPath().contains("/api/users/login")) {
+        if (request.getServletPath().contains("/api/users/login") || request.getServletPath().contains("/api/users/register")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -92,15 +34,15 @@ public class JwtConfig extends OncePerRequestFilter {
         try {
             String jwtToken = extractToken(request);
             validateToken(jwtToken);
+            Claims claims = decodeToken(jwtToken);
+            User user = claimsToUser(claims);
+            validateAuthority(user, request);
 
             // Continue with the filter chain
+            request.setAttribute("user", user);
             filterChain.doFilter(request, response);
         } catch (CustomException e) {
-            System.out.println("Error: " + e.getMessage());
-
-
-            response.setStatus(401);
-
+            System.out.println("Custom Error: " + e.getMessage());
         }
     }
 
@@ -113,6 +55,7 @@ public class JwtConfig extends OncePerRequestFilter {
                 }
             }
         } catch (NullPointerException ex) {
+            System.out.println(request.getHeader("Auth"));
             throw new CustomException("Invalid or Missing token");
         }
         return null;
@@ -135,23 +78,39 @@ public class JwtConfig extends OncePerRequestFilter {
         return Jwts.builder()
                 .setSubject("auth token")
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 300000))
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
                 .signWith(key)
                 .claim("user", user)
                 .compact();
     }
 
-    public static Claims decodeToken(String token) {
-        try{
+    static Claims decodeToken(String token) {
+        try {
             Key key = new SecretKeySpec(secret_key.getBytes(), SignatureAlgorithm.HS256.getJcaName());
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-        }catch (ExpiredJwtException ex){
+        } catch (ExpiredJwtException ex) {
             throw new CustomException("Token Expired !");
-        }catch (Exception ex){
+        } catch (Exception ex) {
             throw new CustomException("Token Invalid !");
         }
 
         Key key = new SecretKeySpec(secret_key.getBytes(), SignatureAlgorithm.HS256.getJcaName());
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
+
+    static void validateAuthority(User user, HttpServletRequest request) {
+        if (request.getServletPath().contains("/api/admin/") && !user.getRole().equals("ADMIN")) {
+            throw new CustomException("User not authorized !");
+        }
+    }
+
+    public static User claimsToUser(Claims claims) {
+        Map<String, Object> userMap = claims.get("user", Map.class);
+        User user = new User();
+        user.setUserId((Integer) userMap.get("userId"));
+        user.setUsername((String) userMap.get("username"));
+        user.setEmail((String) userMap.get("email"));
+        user.setRole((String) userMap.get("role"));
+        return user;
     }
 }

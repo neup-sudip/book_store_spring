@@ -30,10 +30,13 @@ public class UserService {
     }
 
     public User addNewUser(User user) {
+        System.out.println(user.getEmail() + user.getUsername());
         User emailOrUsernameExist = userRepository.findByEmailOrUsername(user.getEmail(), user.getUsername());
 
         if (emailOrUsernameExist != null) {
-            throw new CustomException("User Name is taken");
+            throw new CustomException("UserName/Email is taken");
+        }else{
+            System.out.println("Ok");
         }
 
         return userRepository.save(user);

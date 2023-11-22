@@ -25,16 +25,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping()
-    public ResponseWrapper getAllUsers() {
-        List<User> users = userService.getUsers();
-        List<UserResponseDto> resUser = new ArrayList<>();
-        for (User user : users) {
-            resUser.add(new UserResponseDto(user.getUsername(), user.getEmail(), User.ROLE.valueOf(user.getRole())));
-        }
-        ResponseData res = new ResponseData(resUser, "All users fetched", true);
-        return new ResponseWrapper(res, 200);
-    }
+
 
     @PostMapping("/register")
     public ResponseWrapper createUser(@Valid @RequestBody NewUserReqDto userReqDto) {
@@ -49,7 +40,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseWrapper loginUser(@RequestBody User user, HttpServletResponse response, HttpServletRequest request) {
+    public ResponseWrapper loginUser(@Valid @RequestBody UserLoginDto user, HttpServletResponse response, HttpServletRequest request) {
         User returnUser = userService.login(user.getUsername(), user.getPassword());
         if (returnUser != null) {
             JwtConfig jwtConfig = new JwtConfig();
@@ -65,26 +56,8 @@ public class UserController {
 
             return new ResponseWrapper(new ResponseData(token, "user success", true), 200);
         } else {
-            return new ResponseWrapper(new ResponseData("token", "user not found", false), 400);
+            return new ResponseWrapper(new ResponseData(null, "user not found", false), 400);
         }
-    }
-
-    @GetMapping("/{id}")
-    public ResponseWrapper getUserById(@PathVariable long id) {
-        User user = userService.getUserById(id);
-
-        if (user == null) {
-            return new ResponseWrapper(new ResponseData(null, "User not found !", false), 404);
-        } else {
-            User.ROLE role = User.ROLE.valueOf(user.getRole());
-            UserResponseDto resUser = new UserResponseDto(user.getUsername(), user.getEmail(), role);
-            return new ResponseWrapper(new ResponseData(resUser, "User fetched successfully", true), 200);
-        }
-    }
-
-    @PutMapping("/{id}")
-    public ResponseWrapper updateUser(@PathVariable long id, @RequestBody User user) {
-        return userService.updateUser(user, id);
     }
 
 
