@@ -13,6 +13,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 public class JwtConfig extends OncePerRequestFilter {
@@ -37,12 +38,13 @@ public class JwtConfig extends OncePerRequestFilter {
             Claims claims = decodeToken(jwtToken);
             User user = claimsToUser(claims);
             validateAuthority(user, request);
-
-            // Continue with the filter chain
+//             Continue with the filter chain
             request.setAttribute("user", user);
             filterChain.doFilter(request, response);
         } catch (CustomException e) {
             System.out.println("Custom Error: " + e.getMessage());
+            response.setContentType("application/json");
+            response.getWriter().write("error");
         }
     }
 
@@ -55,16 +57,15 @@ public class JwtConfig extends OncePerRequestFilter {
                 }
             }
         } catch (NullPointerException ex) {
-            System.out.println(request.getHeader("Auth"));
-            throw new CustomException("Invalid or Missing token");
+            throw new CustomException("Missing token");
         }
         return null;
     }
 
-    private void validateToken(String token) {
 
+    private void validateToken(String token) {
         if (token == null || isTokenExpired(token)) {
-            throw new CustomException("Invalid or missing token");
+            throw new CustomException("Invalid or Missing token");
         }
     }
 
@@ -100,7 +101,7 @@ public class JwtConfig extends OncePerRequestFilter {
 
     static void validateAuthority(User user, HttpServletRequest request) {
         if (request.getServletPath().contains("/api/admin/") && !user.getRole().equals("ADMIN")) {
-            throw new CustomException("User not authorized !");
+            throw new CustomException("User not Authorized !");
         }
     }
 
