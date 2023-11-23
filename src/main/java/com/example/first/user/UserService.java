@@ -1,15 +1,12 @@
 package com.example.first.user;
 
+import com.example.first.utils.ApiResponse;
 import com.example.first.utils.CustomException;
-import com.example.first.utils.ResponseData;
-import com.example.first.utils.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class UserService {
@@ -38,29 +35,24 @@ public class UserService {
         }else{
             System.out.println("Ok");
         }
-
         return userRepository.save(user);
     }
 
-    public ResponseWrapper updateUser(User user, long id) {
+    public ApiResponse updateUser(User user, long id) {
         User prevUser = userRepository.findById(id).orElse(null);
-
         if (prevUser == null) {
-            return new ResponseWrapper(new ResponseData(null, "User not found !", false), 400);
+            return new ApiResponse(false, null, "User not found !", 400);
         }
-
         User emailOrUsernameExist = userRepository.findByNotIdAndEmailOrUsername(id, user.getEmail(), user.getUsername());
         if (emailOrUsernameExist != null) {
-            return new ResponseWrapper(new ResponseData(null, "Email/Username already exist !", false), 400);
+            return new ApiResponse(false,null, "Email/Username already exist !", 400);
         }
-
         prevUser.setRole(user.getRole());
         prevUser.setEmail(user.getEmail());
         prevUser.setUsername(user.getUsername());
         prevUser.setPassword(user.getPassword());
         userRepository.save(prevUser);
-
-        return new ResponseWrapper(new ResponseData(prevUser, "User updated successfully !", true), 200);
+        return new ApiResponse(true,prevUser, "User updated successfully !", 200);
     }
 
     public User login(String username, String password){

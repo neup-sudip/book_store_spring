@@ -1,18 +1,14 @@
 package com.example.first.user;
 
 import com.example.first.utils.JwtConfig;
-import com.example.first.utils.ResponseData;
-import com.example.first.utils.ResponseWrapper;
+import com.example.first.utils.ApiResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Profiles;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -28,7 +24,7 @@ public class UserController {
 
 
     @PostMapping("/register")
-    public ResponseWrapper createUser(@Valid @RequestBody NewUserReqDto userReqDto) {
+    public ApiResponse createUser(@Valid @RequestBody NewUserReqDto userReqDto) {
 
         User newUser = new User(userReqDto.getUsername(), userReqDto.getPassword(), userReqDto.getEmail(), userReqDto.getRole());
 
@@ -36,11 +32,11 @@ public class UserController {
         User.ROLE role = User.ROLE.valueOf(user.getRole());
 
         UserResponseDto resUser = new UserResponseDto(user.getUsername(), user.getEmail(), role);
-        return new ResponseWrapper(new ResponseData(resUser, "User created successfully !", true), 200);
+        return new ApiResponse(true, resUser, "User created successfully !",  200);
     }
 
     @PostMapping("/login")
-    public ResponseWrapper loginUser(@Valid @RequestBody UserLoginDto user, HttpServletResponse response, HttpServletRequest request) {
+    public ApiResponse loginUser(@Valid @RequestBody UserLoginDto user, HttpServletResponse response, HttpServletRequest request) {
         User returnUser = userService.login(user.getUsername(), user.getPassword());
         if (returnUser != null) {
             JwtConfig jwtConfig = new JwtConfig();
@@ -54,9 +50,9 @@ public class UserController {
             cookie.setPath("/");
             response.addCookie(cookie);
 
-            return new ResponseWrapper(new ResponseData(token, "user success", true), 200);
+            return new ApiResponse(true, token, "user success", 200);
         } else {
-            return new ResponseWrapper(new ResponseData(null, "user not found", false), 400);
+            return new ApiResponse(false, null, "user not found",  200);
         }
     }
 

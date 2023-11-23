@@ -2,11 +2,11 @@ package com.example.first.utils;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -16,8 +16,8 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  {
 
-    @Override
-    protected ResponseWrapper handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
+//    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
                                                                   HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         Map<String, String> errors = new HashMap<>();
 
@@ -27,8 +27,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  {
             errors.put(errorTitle, errorMessage);
         });
 
-        ResponseData res = new ResponseData(errors, "Error !", false);
-        return new ResponseWrapper(res, 400);
+        return  ResponseEntity.badRequest().body(new ApiResponse(false, errors, "Error !", 400)) ;
+    }
+
+    @ExceptionHandler(CustomException.class)
+    public ApiResponse handleCustomException(CustomException exception){
+        return new ApiResponse( false, null, exception.getMessage(),  400);
     }
 
 //    @ExceptionHandler(Exception.class)
@@ -54,11 +58,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  {
 //        }
 //    }
 
-    @ExceptionHandler(CustomException.class)
-    public ResponseWrapper handleCustomException(CustomException exception){
-        ResponseData res = new ResponseData(null, exception.getMessage(), false);
-        return new ResponseWrapper(res, 400);
-    }
 
 //    @ExceptionHandler(CustomException.class)
 //    public String handleCustomException(CustomException exception, HttpServletRequest request, Model model){

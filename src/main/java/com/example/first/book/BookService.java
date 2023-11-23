@@ -1,7 +1,6 @@
 package com.example.first.book;
 
-import com.example.first.utils.ResponseData;
-import com.example.first.utils.ResponseWrapper;
+import com.example.first.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -33,11 +32,11 @@ public class BookService {
         return bookRepository.save(book);
     }
 
-    public ResponseWrapper updateBook(Book book, long id) {
+    public ApiResponse updateBook(Book book, long id) {
         Book prevBook = bookRepository.findById(id).orElse(null);
 
         if (prevBook == null) {
-            return new ResponseWrapper(new ResponseData(null, "Book not found !", false), 400);
+            return new ApiResponse(false, null, "Book not found !",  400);
         }
 
         prevBook.setTitle(book.getTitle());
@@ -47,6 +46,6 @@ public class BookService {
         prevBook.setAvailable(book.isAvailable());
         bookRepository.save(prevBook);
 
-        return new ResponseWrapper(new ResponseData(prevBook, "Book updated successfully !", true), 200);
+        return new ApiResponse(true, prevBook, "Book updated successfully !",  200);
     }
 }

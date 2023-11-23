@@ -1,6 +1,7 @@
 package com.example.first.utils;
 
 import com.example.first.user.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,7 +14,6 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 public class JwtConfig extends OncePerRequestFilter {
@@ -43,8 +43,10 @@ public class JwtConfig extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (CustomException e) {
             System.out.println("Custom Error: " + e.getMessage());
+            ObjectMapper objectMapper = new ObjectMapper();
+            ApiResponse apiResponse = new ApiResponse(false, null, e.getMessage(), 301);
             response.setContentType("application/json");
-            response.getWriter().write("error");
+            response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
         }
     }
 
