@@ -64,7 +64,6 @@ public class JwtConfig extends OncePerRequestFilter {
         return null;
     }
 
-
     private void validateToken(String token) {
         if (token == null || isTokenExpired(token)) {
             throw new CustomException("Invalid or Missing token");
@@ -107,7 +106,7 @@ public class JwtConfig extends OncePerRequestFilter {
         }
     }
 
-    public static User claimsToUser(Claims claims) {
+    private static User claimsToUser(Claims claims) {
         Map<String, Object> userMap = claims.get("user", Map.class);
         User user = new User();
         user.setUserId((Integer) userMap.get("userId"));

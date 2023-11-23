@@ -20,8 +20,8 @@ public class BookService {
         return bookRepository.findAll(Sort.by("bookId"));
     }
 
-    public Book getBookById(long id) {
-        return bookRepository.findById(id).orElse(null);
+    public Book getBookBySlug(String slug) {
+        return bookRepository.findBySlug(slug);
     }
 
     public Book getBookByTitle(String bookTitle){
@@ -40,6 +40,8 @@ public class BookService {
         }
 
         prevBook.setTitle(book.getTitle());
+        prevBook.setSlug(book.getSlug());
+        prevBook.setDetail(book.getDetail());
         prevBook.setAuthor(book.getAuthor());
         prevBook.setGenre(book.getGenre());
         prevBook.setPrice(book.getPrice());

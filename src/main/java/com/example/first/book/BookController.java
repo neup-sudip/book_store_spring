@@ -1,6 +1,8 @@
 package com.example.first.book;
 
+import com.example.first.user.User;
 import com.example.first.utils.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,20 +18,23 @@ public class BookController {
     }
 
     @GetMapping()
-    public ApiResponse getAllBooks() {
-        return new ApiResponse(true, bookService.getBooks(), "All books fetched",  200);
-    }
-
-    @GetMapping("/book")
-    public ApiResponse getBookByTitle(@RequestParam String title){
-        return new ApiResponse(true, bookService.getBookByTitle(title), "Book fetched", 200);
-    }
-
-    @GetMapping("/{id}")
-    public ApiResponse getSingleBook(@PathVariable long id) {
-        return new ApiResponse(true, bookService.getBookById(id), "Book fetched",  200);
+    public ApiResponse getAllBooks(HttpServletRequest request) {
+        return new ApiResponse(true, bookService.getBooks(), "All books fetched", 200);
     }
 
 
+//    @GetMapping("/book")
+//    public ApiResponse getBookByTitle(@RequestParam String title){
+//        return new ApiResponse(true, bookService.getBookByTitle(title), "Book fetched", 200);
+//    }
 
+    @GetMapping("/{slug}")
+    public ApiResponse getBookBySlug(@PathVariable String slug) {
+        Book book = bookService.getBookBySlug(slug);
+        if (book == null) {
+            return new ApiResponse(false, null, "Book not found", 200);
+        } else {
+            return new ApiResponse(true, book, "Book fetched", 200);
+        }
+    }
 }
