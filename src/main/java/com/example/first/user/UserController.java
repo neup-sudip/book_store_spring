@@ -22,6 +22,17 @@ public class UserController {
     }
 
 
+    @GetMapping("/profile")
+    public ApiResponse getProfile(HttpServletRequest request){
+        User decodedUser = (User) request.getAttribute("user");
+
+        User user = userService.getUserById(decodedUser.getUserId());
+
+        User.ROLE role = User.ROLE.valueOf(user.getRole());
+        UserResponseDto resUser = new UserResponseDto(user.getUsername(), user.getEmail(), role);
+
+        return new ApiResponse(true, resUser, "User fetched successfully", 200);
+    }
 
     @PostMapping("/register")
     public ApiResponse createUser(@Valid @RequestBody NewUserReqDto userReqDto) {
@@ -36,7 +47,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ApiResponse loginUser(@Valid @RequestBody UserLoginDto user, HttpServletResponse response, HttpServletRequest request) {
+    public ApiResponse loginUser(@Valid @RequestBody UserLoginDto user, HttpServletResponse response) {
         User returnUser = userService.login(user.getUsername(), user.getPassword());
         if (returnUser != null) {
             JwtConfig jwtConfig = new JwtConfig();
@@ -46,8 +57,9 @@ public class UserController {
             final Cookie cookie = new Cookie("auth", token);
             cookie.setSecure(false);
             cookie.setHttpOnly(true);
-            cookie.setMaxAge(100);
-            cookie.setPath("/");
+            cookie.setMaxAge(50400);
+            cookie.setMaxAge(50400);
+            cookie.setPath("/api");
             response.addCookie(cookie);
 
             return new ApiResponse(true, token, "user success", 200);

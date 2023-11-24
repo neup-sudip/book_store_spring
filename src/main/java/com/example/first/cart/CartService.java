@@ -2,11 +2,11 @@ package com.example.first.cart;
 
 import com.example.first.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class CartService {
 
     private final CartRepository cartRepository;
