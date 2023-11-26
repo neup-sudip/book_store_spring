@@ -27,7 +27,7 @@ public class JwtConfig extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        if (request.getServletPath().contains("/api/users/login") || request.getServletPath().contains("/api/users/register")) {
+        if (request.getServletPath().contains("/api/auth/") || request.getServletPath().contains("/api/books")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -44,7 +44,7 @@ public class JwtConfig extends OncePerRequestFilter {
         } catch (CustomException e) {
             System.out.println("Custom Error: " + e.getMessage());
             ObjectMapper objectMapper = new ObjectMapper();
-            ApiResponse apiResponse = new ApiResponse(false, null, e.getMessage(), 301);
+            ApiResponse apiResponse = new ApiResponse(false, null, e.getMessage(), 401);
             response.setContentType("application/json");
             response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
         }

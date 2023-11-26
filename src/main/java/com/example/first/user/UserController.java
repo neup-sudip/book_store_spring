@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api")
 public class UserController {
 
     private final UserService userService;
@@ -22,7 +22,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/profile")
+    @GetMapping("/users/profile")
     public ApiResponse getProfile(HttpServletRequest request){
         User decodedUser = (User) request.getAttribute("user");
 
@@ -34,7 +34,7 @@ public class UserController {
         return new ApiResponse(true, resUser, "User fetched successfully", 200);
     }
 
-    @PostMapping("/register")
+    @PostMapping("/auth/register")
     public ApiResponse createUser(@Valid @RequestBody NewUserReqDto userReqDto) {
 
         User newUser = new User(userReqDto.getUsername(), userReqDto.getPassword(), userReqDto.getEmail(), userReqDto.getRole());
@@ -46,7 +46,7 @@ public class UserController {
         return new ApiResponse(true, resUser, "User created successfully !",  200);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public ApiResponse loginUser(@Valid @RequestBody UserLoginDto user, HttpServletResponse response) {
         User returnUser = userService.login(user.getUsername(), user.getPassword());
         if (returnUser != null) {
@@ -64,7 +64,7 @@ public class UserController {
 
             return new ApiResponse(true, token, "user success", 200);
         } else {
-            return new ApiResponse(false, null, "user not found",  200);
+            return new ApiResponse(false, null, "user not found",  400);
         }
     }
 

@@ -24,21 +24,21 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
-    public ApiResponse updateCart(Cart cart, long userId){
-        Cart prevCart = cartRepository.findById(cart.getCartId()).orElse(null);
-        if (prevCart != null && cart.getUserId().equals(userId)) {
-            prevCart.setQuantity(cart.getQuantity());
+    public ApiResponse updateCart(long cartId, int quantity, long userId){
+        Cart prevCart = cartRepository.findById(cartId).orElse(null);
+        if (prevCart != null && prevCart.getUser().getUserId() == userId) {
+            prevCart.setQuantity(quantity);
             cartRepository.save(prevCart);
             return new ApiResponse(true, prevCart, "Cart updated successfully", 200);
         } else {
-            return new ApiResponse(false, null, "Error updating cart", 200);
+            return new ApiResponse(false, null, "Error updating cart", 400);
         }
     }
 
     public boolean removeBookFromCart(long cartId, long userId) {
         try {
             Cart cart = cartRepository.findById(cartId).orElse(null);
-            if (cart != null && cart.getUserId().equals(userId)) {
+            if (cart != null && cart.getUser().getUserId() == userId) {
                 cartRepository.deleteById(cartId);
                 return true;
             } else {

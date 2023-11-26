@@ -50,7 +50,7 @@ public class AdminController {
         User user = userService.getUserById(id);
 
         if (user == null) {
-            return new ApiResponse(false, null, "User not found !", 200);
+            return new ApiResponse(false, null, "User not found !", 400);
         } else {
             User.ROLE role = User.ROLE.valueOf(user.getRole());
             UserResponseDto resUser = new UserResponseDto(user.getUsername(), user.getEmail(), role);

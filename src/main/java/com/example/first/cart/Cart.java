@@ -14,11 +14,11 @@ public class Cart {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User userId;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = false)
-    private Book bookId;
+    private Book book;
 
     @Column(name = "quantity")
     private int quantity;
@@ -27,8 +27,8 @@ public class Cart {
     }
 
     public Cart(User userId, Book bookId, int quantity) {
-        this.userId = userId;
-        this.bookId = bookId;
+        this.user = userId;
+        this.book = bookId;
         this.quantity = quantity;
     }
 
@@ -40,20 +40,20 @@ public class Cart {
         this.cartId = cartId;
     }
 
-    public User getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(User userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public Book getBookId() {
-        return bookId;
+    public Book getBook() {
+        return book;
     }
 
-    public void setBookId(Book bookId) {
-        this.bookId = bookId;
+    public void setBook(Book book) {
+        this.book = book;
     }
 
     public int getQuantity() {
