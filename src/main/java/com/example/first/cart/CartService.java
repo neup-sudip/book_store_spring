@@ -4,6 +4,7 @@ import com.example.first.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,20 +17,29 @@ public class CartService {
         this.cartRepository = cartRepository;
     }
 
-    public List<Cart> getBooksFromCart(long userId) {
-        return cartRepository.findAllBooksByUser(userId);
+    public List<CartResDto> getBooksFromCart(long userId) {
+        List<Cart> cartList = cartRepository.findAllBooksByUser(userId);
+        List<CartResDto> cartResDtoList = new ArrayList<>();
+        for (Cart cart : cartList) {
+            cartResDtoList.add(new CartResDto(cart.getCartId(), cart.getBook(), cart.getQuantity()));
+        }
+        return cartResDtoList;
     }
 
-    public Cart addBookToCart(Cart cart) {
-        return cartRepository.save(cart);
+    public CartResDto addBookToCart(Cart cart) {
+        Cart newCart = cartRepository.save(cart);
+        return new CartResDto(newCart.getCartId(), newCart.getBook(), newCart.getQuantity());
     }
 
     public ApiResponse updateCart(long cartId, int quantity, long userId){
         Cart prevCart = cartRepository.findById(cartId).orElse(null);
         if (prevCart != null && prevCart.getUser().getUserId() == userId) {
+
             prevCart.setQuantity(quantity);
-            cartRepository.save(prevCart);
-            return new ApiResponse(true, prevCart, "Cart updated successfully", 200);
+            Cart cart = cartRepository.save(prevCart);
+            CartResDto cartResDto = new CartResDto(cart.getCartId(), cart.getBook(), cart.getQuantity());
+
+            return new ApiResponse(true, cartResDto, "Cart updated successfully", 200);
         } else {
             return new ApiResponse(false, null, "Error updating cart", 400);
         }

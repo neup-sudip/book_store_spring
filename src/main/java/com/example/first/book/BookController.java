@@ -22,12 +22,6 @@ public class BookController {
         return new ApiResponse(true, bookService.getBooks(), "All books fetched", 200);
     }
 
-
-//    @GetMapping("/book")
-//    public ApiResponse getBookByTitle(@RequestParam String title){
-//        return new ApiResponse(true, bookService.getBookByTitle(title), "Book fetched", 200);
-//    }
-
     @GetMapping("/{slug}")
     public ApiResponse getBookBySlug(@PathVariable String slug) {
         Book book = bookService.getBookBySlug(slug);

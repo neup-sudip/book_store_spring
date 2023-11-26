@@ -3,6 +3,7 @@ package com.example.first.admin;
 import com.example.first.book.Book;
 import com.example.first.book.BookService;
 import com.example.first.user.User;
+import com.example.first.user.UserRepository;
 import com.example.first.user.UserResponseDto;
 import com.example.first.user.UserService;
 import com.example.first.utils.ApiResponse;
@@ -37,24 +38,18 @@ public class AdminController {
 
     @GetMapping("/users")
     public ApiResponse getAllUsers() {
-        List<User> users = userService.getUsers();
-        List<UserResponseDto> resUsers = new ArrayList<>();
-        for (User user : users) {
-            resUsers.add(new UserResponseDto(user.getUsername(), user.getEmail(), User.ROLE.valueOf(user.getRole())));
-        }
-        return new ApiResponse(true, resUsers, "All users fetched", 200);
+        return new ApiResponse(true, userService.getUsers(), "All users fetched", 200);
     }
 
     @GetMapping("/users/{id}")
     public ApiResponse getUserById(@PathVariable long id) {
-        User user = userService.getUserById(id);
+        UserResponseDto user = userService.getUserById(id);
 
         if (user == null) {
             return new ApiResponse(false, null, "User not found !", 400);
         } else {
-            User.ROLE role = User.ROLE.valueOf(user.getRole());
-            UserResponseDto resUser = new UserResponseDto(user.getUsername(), user.getEmail(), role);
-            return new ApiResponse(true, resUser, "User fetched successfully", 200);
+
+            return new ApiResponse(true, user, "User fetched successfully", 200);
         }
     }
 

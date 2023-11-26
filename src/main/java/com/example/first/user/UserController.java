@@ -25,25 +25,18 @@ public class UserController {
     @GetMapping("/users/profile")
     public ApiResponse getProfile(HttpServletRequest request){
         User decodedUser = (User) request.getAttribute("user");
+        UserResponseDto user = userService.getUserById(decodedUser.getUserId());
 
-        User user = userService.getUserById(decodedUser.getUserId());
-
-        User.ROLE role = User.ROLE.valueOf(user.getRole());
-        UserResponseDto resUser = new UserResponseDto(user.getUsername(), user.getEmail(), role);
-
-        return new ApiResponse(true, resUser, "User fetched successfully", 200);
+        return new ApiResponse(true, user, "User fetched successfully", 200);
     }
 
     @PostMapping("/auth/register")
     public ApiResponse createUser(@Valid @RequestBody NewUserReqDto userReqDto) {
-
         User newUser = new User(userReqDto.getUsername(), userReqDto.getPassword(), userReqDto.getEmail(), userReqDto.getRole());
 
-        User user = userService.addNewUser(newUser);
-        User.ROLE role = User.ROLE.valueOf(user.getRole());
+        UserResponseDto user = userService.addNewUser(newUser);
 
-        UserResponseDto resUser = new UserResponseDto(user.getUsername(), user.getEmail(), role);
-        return new ApiResponse(true, resUser, "User created successfully !",  200);
+        return new ApiResponse(true, user, "User created successfully !",  200);
     }
 
     @PostMapping("/auth/login")
