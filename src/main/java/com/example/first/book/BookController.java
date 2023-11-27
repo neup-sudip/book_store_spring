@@ -37,8 +37,4 @@ public class BookController {
             return new ApiResponse(true, book, "Book fetched", 200);
         }
     }
-
-
-
-
 }
