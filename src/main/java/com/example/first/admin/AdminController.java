@@ -2,16 +2,12 @@ package com.example.first.admin;
 
 import com.example.first.book.Book;
 import com.example.first.book.BookService;
-import com.example.first.user.User;
-import com.example.first.user.UserRepository;
-import com.example.first.user.UserResponseDto;
-import com.example.first.user.UserService;
+import com.example.first.authanduser.User;
+import com.example.first.authanduser.UserResponseDto;
+import com.example.first.authanduser.UserService;
 import com.example.first.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -33,7 +29,7 @@ public class AdminController {
 
     @PutMapping("/books/{id}")
     public ApiResponse editBook(@PathVariable long id, @RequestBody Book newBook) {
-        return new ApiResponse(true, bookService.updateBook(newBook, id), "Book edited successfully", 200);
+        return bookService.updateBook(newBook, id);
     }
 
     @GetMapping("/users")

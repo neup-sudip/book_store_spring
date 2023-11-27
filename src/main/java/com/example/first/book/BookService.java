@@ -1,15 +1,19 @@
 package com.example.first.book;
 
 import com.example.first.utils.ApiResponse;
+import com.example.first.utils.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
 public class BookService {
 
     private final BookRepository bookRepository;
+
+    private final int totalBooksPerPage = 4;
 
     @Autowired
     public BookService(BookRepository bookRepository) {
@@ -24,30 +28,52 @@ public class BookService {
         return bookRepository.findBySlug(slug);
     }
 
-    public Book getBookByTitle(String bookTitle){
-        return bookRepository.findByTitle(bookTitle);
+    public int countBooks(String searchTerm) {
+        long totalBooks = bookRepository.countBooks(searchTerm);
+
+        if (totalBooks <= 0) {
+            return 1;
+        } else {
+            return (int) Math.ceil((double) totalBooks / totalBooksPerPage);
+        }
+    }
+
+    public List<Book> searchBooks(String searchTerm, int currentPage) {
+        int offset = 0;
+        if (currentPage > 1) {
+            offset = (currentPage - 1) * totalBooksPerPage;
+        }
+        return bookRepository.searchBooks(searchTerm, offset, totalBooksPerPage);
     }
 
     public Book addNewBook(Book book) {
-        return bookRepository.save(book);
+        try {
+            return bookRepository.save(book);
+        } catch (Exception exception) {
+            throw new CustomException("Error while adding book !");
+        }
     }
 
     public ApiResponse updateBook(Book book, long id) {
-        Book prevBook = bookRepository.findById(id).orElse(null);
+        try{
+            Book prevBook = bookRepository.findById(id).orElse(null);
 
-        if (prevBook == null) {
-            return new ApiResponse(false, null, "Book not found !",  400);
+            if (prevBook == null) {
+                return new ApiResponse(false, null, "Book not found !", 400);
+            }
+
+            prevBook.setTitle(book.getTitle());
+            prevBook.setSlug(book.getSlug());
+            prevBook.setDetail(book.getDetail());
+            prevBook.setAuthor(book.getAuthor());
+            prevBook.setGenre(book.getGenre());
+            prevBook.setPrice(book.getPrice());
+            prevBook.setAvailable(book.isAvailable());
+            bookRepository.save(prevBook);
+
+            return new ApiResponse(true, prevBook, "Book updated successfully !", 200);
+        }catch (Exception exception){
+            throw new CustomException("Error while updating book !");
         }
-
-        prevBook.setTitle(book.getTitle());
-        prevBook.setSlug(book.getSlug());
-        prevBook.setDetail(book.getDetail());
-        prevBook.setAuthor(book.getAuthor());
-        prevBook.setGenre(book.getGenre());
-        prevBook.setPrice(book.getPrice());
-        prevBook.setAvailable(book.isAvailable());
-        bookRepository.save(prevBook);
-
-        return new ApiResponse(true, prevBook, "Book updated successfully !",  200);
     }
 }

@@ -1,6 +1,6 @@
 package com.example.first.utils;
 
-import com.example.first.user.User;
+import com.example.first.authanduser.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
@@ -89,15 +89,15 @@ public class JwtConfig extends OncePerRequestFilter {
     static Claims decodeToken(String token) {
         try {
             Key key = new SecretKeySpec(secret_key.getBytes(), SignatureAlgorithm.HS256.getJcaName());
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+            return  Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException ex) {
             throw new CustomException("Token Expired !");
         } catch (Exception ex) {
             throw new CustomException("Token Invalid !");
         }
 
-        Key key = new SecretKeySpec(secret_key.getBytes(), SignatureAlgorithm.HS256.getJcaName());
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+//        Key key = new SecretKeySpec(secret_key.getBytes(), SignatureAlgorithm.HS256.getJcaName());
+//        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
     static void validateAuthority(User user, HttpServletRequest request) {

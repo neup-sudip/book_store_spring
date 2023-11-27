@@ -1,6 +1,5 @@
-package com.example.first.user;
+package com.example.first.authanduser;
 
-import com.example.first.book.Book;
 import jakarta.persistence.*;
 
 @Entity

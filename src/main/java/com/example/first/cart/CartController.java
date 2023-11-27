@@ -1,13 +1,11 @@
 package com.example.first.cart;
 
 import com.example.first.book.Book;
-import com.example.first.user.User;
+import com.example.first.authanduser.User;
 import com.example.first.utils.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/cart")

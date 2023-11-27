@@ -1,4 +1,4 @@
-package com.example.first.user;
+package com.example.first.authanduser;
 
 import com.example.first.utils.ApiResponse;
 import com.example.first.utils.CustomException;
@@ -36,7 +36,10 @@ public class UserService {
         } else {
             return null;
         }
+    }
 
+    public User getUserByIdNonDto(long id) {
+        return userRepository.findById(id).orElse(null);
     }
 
     public UserResponseDto addNewUser(User user) {

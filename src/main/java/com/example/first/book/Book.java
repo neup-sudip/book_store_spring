@@ -13,10 +13,10 @@ public class Book {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "slug")
+    @Column(name = "slug", unique = true)
     private String slug;
 
-    @Column(name = "detail",length = 2000)
+    @Column(name = "detail", length = 2000)
     private String detail;
 
     @Column(name = "author")
