@@ -5,16 +5,10 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 
 public class UserResponseDto {
-    @NotEmpty
-    @Pattern(regexp = "^[A-Za-z][A-Za-z0-9_]{7,29}$", message = "username should be 8-30 char long, only include letter, number and _")
     private String username;
 
-    @NotEmpty
-    @Email(message = "Invalid email type !")
     private String email;
 
-    @NotEmpty
-    @Pattern(regexp = "^(ADMIN|USER)$", message = "Invalid usertype !")
     private User.ROLE role;
 
     public UserResponseDto() {

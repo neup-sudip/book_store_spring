@@ -41,7 +41,6 @@ public class UserController {
             cookie.setSecure(false);
             cookie.setHttpOnly(true);
             cookie.setMaxAge(50400);
-//            cookie.setMaxAge(50400);
             cookie.setPath("/api");
             response.addCookie(cookie);
 
