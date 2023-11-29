@@ -4,23 +4,23 @@ import java.util.List;
 
 public class BookPaginationRes {
 
-    private List<Book> books;
+    private List<BookResDto> books;
 
     private int totalPages;
 
     public BookPaginationRes() {
     }
 
-    public BookPaginationRes(List<Book> books, int totalPages) {
+    public BookPaginationRes(List<BookResDto> books, int totalPages) {
         this.books = books;
         this.totalPages = totalPages;
     }
 
-    public List<Book> getBooks() {
+    public List<BookResDto> getBooks() {
         return books;
     }
 
-    public void setBooks(List<Book> books) {
+    public void setBooks(List<BookResDto> books) {
         this.books = books;
     }
 

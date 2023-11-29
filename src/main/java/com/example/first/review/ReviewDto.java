@@ -1,5 +1,7 @@
 package com.example.first.review;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
@@ -7,12 +9,11 @@ public class ReviewDto {
 
     private long reviewId;
 
-//    @NotEmpty(message = "BookId is required !")
-//    @Size(min = 0, message = "Invalid book id")
+    @Min(value = 0, message = "Invalid book id")
     private long bookId;
 
-//    @NotEmpty(message = "Rating is required !")
-//    @Size(min = 0, max = 5, message = "Rating should be 0-5")
+    @Min(value = 0, message = "Rating should be greater than 0")
+    @Max(value = 5, message = "Rating should be less than 6")
     private int rating;
 
     private String comment;
@@ -22,8 +23,7 @@ public class ReviewDto {
     public ReviewDto() {
     }
 
-    public ReviewDto(long reviewId, long bookId, int rating, String comment, ReviewUserDto reviewUserDto) {
-        this.reviewId = reviewId;
+    public ReviewDto(long bookId, int rating, String comment, ReviewUserDto reviewUserDto) {
         this.bookId = bookId;
         this.rating = rating;
         this.comment = comment;

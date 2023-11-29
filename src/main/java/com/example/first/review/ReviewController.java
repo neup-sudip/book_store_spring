@@ -20,7 +20,7 @@ public class ReviewController {
 
     @GetMapping("/{id}")
     public ApiResponse getAllReviews(@PathVariable long id){
-        return new ApiResponse(true, reviewService.getAllReviews(id), "Reviews fetched ", 200);
+        return new ApiResponse(true, reviewService.getAllReviewsByBook(id), "Reviews fetched ", 200);
     }
 
     @GetMapping("/get/{id}")
@@ -37,22 +37,24 @@ public class ReviewController {
     public ApiResponse addReview(@Valid @RequestBody ReviewDto reviewDto, HttpServletRequest request){
         User decodedUser = (User) request.getAttribute("user");
 
-        ReviewDto newReview = reviewService.addReview(reviewDto, decodedUser.getUserId());
-        if(newReview == null){
-            return new ApiResponse(false, null, "Error adding review", 400);
+        Review prevReview = reviewService.getReviewByUserId(decodedUser.getUserId());
+
+        if(prevReview == null){
+            ReviewDto newReview = reviewService.addReview(reviewDto, decodedUser.getUserId());
+            if(newReview == null){
+                return new ApiResponse(false, null, "Error adding review", 400);
+            }else{
+                return new ApiResponse(true, newReview, "Review added", 200);
+            }
         }else{
-            return new ApiResponse(true, newReview, "Review added", 200);
+            return reviewService.editReview(reviewDto, decodedUser.getUserId(), prevReview.getReviewId());
         }
     }
 
-    @PutMapping("/{id}")
-    public ApiResponse editReview(@Valid @RequestBody ReviewDto reviewDto, @PathVariable long id,  HttpServletRequest request){
-        User decodedUser = (User) request.getAttribute("user");
-
-        return reviewService.editReview(reviewDto, decodedUser.getUserId(), id);
-
-    }
-
-
+//    @PutMapping("/{id}")
+//    public ApiResponse editReview(@Valid @RequestBody ReviewDto reviewDto, @PathVariable long id,  HttpServletRequest request){
+//        User decodedUser = (User) request.getAttribute("user");
+//        return reviewService.editReview(reviewDto, decodedUser.getUserId(), id);
+//    }
 
 }

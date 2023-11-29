@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BookService {
@@ -20,9 +21,6 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
-    public List<Book> getBooks() {
-        return bookRepository.findAll(Sort.by("bookId"));
-    }
 
     public Book getBookBySlug(String slug) {
         return bookRepository.findBySlug(slug);
@@ -38,7 +36,7 @@ public class BookService {
         }
     }
 
-    public List<Book> searchBooks(String searchTerm, int currentPage) {
+    public List<Book> getBooks(String searchTerm, int currentPage) {
         int offset = 0;
         if (currentPage > 1) {
             offset = (currentPage - 1) * totalBooksPerPage;

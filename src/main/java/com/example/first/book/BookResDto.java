@@ -1,28 +1,98 @@
 package com.example.first.book;
 
+import jakarta.persistence.Column;
+
 public class BookResDto {
 
-    private Book book;
-
+    private long bookId;
+    private String title;
+    private String slug;
+    private String detail;
+    private String author;
+    private String genre;
+    private double price;
+    private boolean available;
     private double overallRating;
-
-    private int numberOfReviews;
+    private long numberOfReviews;
 
     public BookResDto() {
     }
 
-    public BookResDto(Book book, double overallRating, int numberOfReviews) {
-        this.book = book;
+    public BookResDto(Book book, double overallRating, long numberOfReviews) {
+        this.bookId = book.getBookId();
+        this.title = book.getTitle();
+        this.slug = book.getSlug();
+        this.detail = book.getDetail();
+        this.author = book.getAuthor();
+        this.genre = book.getGenre();
+        this.price = book.getPrice();
+        this.available = book.isAvailable();
         this.overallRating = overallRating;
         this.numberOfReviews = numberOfReviews;
     }
 
-    public Book getBook() {
-        return book;
+    public long getBookId() {
+        return bookId;
     }
 
-    public void setBook(Book book) {
-        this.book = book;
+    public void setBookId(long bookId) {
+        this.bookId = bookId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 
     public double getOverallRating() {
@@ -33,11 +103,11 @@ public class BookResDto {
         this.overallRating = overallRating;
     }
 
-    public int getNumberOfReviews() {
+    public long getNumberOfReviews() {
         return numberOfReviews;
     }
 
-    public void setNumberOfReviews(int numberOfReviews) {
+    public void setNumberOfReviews(long numberOfReviews) {
         this.numberOfReviews = numberOfReviews;
     }
 }

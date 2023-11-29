@@ -27,7 +27,7 @@ public class JwtConfig extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        if (request.getServletPath().contains("/api/auth/") || request.getServletPath().contains("/api/books")) {
+        if (request.getServletPath().contains("/api/auth/") || request.getServletPath().contains("/api/books") || (request.getServletPath().contains("/api/reviews") && request.getMethod().equals("GET") )) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -95,9 +95,6 @@ public class JwtConfig extends OncePerRequestFilter {
         } catch (Exception ex) {
             throw new CustomException("Token Invalid !");
         }
-
-//        Key key = new SecretKeySpec(secret_key.getBytes(), SignatureAlgorithm.HS256.getJcaName());
-//        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
     static void validateAuthority(User user, HttpServletRequest request) {
