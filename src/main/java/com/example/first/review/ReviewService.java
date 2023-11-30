@@ -24,14 +24,10 @@ public class ReviewService {
     public List<ReviewDto> getAllReviewsByBook(long bookId) {
         List<Review> reviewList = reviewRepository.getReviewByBookId(bookId);
         List<ReviewDto> reviewDtoList = new ArrayList<>();
-
         for (Review review : reviewList) {
-            ReviewUserDto reviewUserDto = new ReviewUserDto(review.getUser().getUserId(), review.getUser().getUsername());
-            ReviewDto reviewDto = new ReviewDto(review.getBook().getBookId(), review.getRating(), review.getComment(), reviewUserDto);
-            reviewDto.setReviewId(review.getReviewId());
+            ReviewDto reviewDto = new ReviewDto(review);
             reviewDtoList.add(reviewDto);
         }
-
         return reviewDtoList;
     }
 
@@ -39,41 +35,39 @@ public class ReviewService {
         return reviewRepository.getReviewByUserId(userId);
     }
 
-    public ReviewDto getSingleReview(long reviewId) {
-        Review review = reviewRepository.findById(reviewId).orElse(null);
+//    public ReviewDto getSingleReview(long reviewId) {
+//        Review review = reviewRepository.findById(reviewId).orElse(null);
+//
+//        if (review == null) {
+//            return null;
+//        } else {
+//            ReviewUserDto reviewUserDto = new ReviewUserDto(review.getUser().getUserId(), review.getUser().getUsername());
+//
+//            ReviewDto reviewDto = new ReviewDto(review.getBook().getBookId(), review.getRating(), review.getComment(), reviewUserDto);
+//            reviewDto.setReviewId(review.getReviewId());
+//            return reviewDto;
+//        }
+//    }
 
-        if (review == null) {
-            return null;
-        } else {
-            ReviewUserDto reviewUserDto = new ReviewUserDto(review.getUser().getUserId(), review.getUser().getUsername());
-
-            ReviewDto reviewDto = new ReviewDto(review.getBook().getBookId(), review.getRating(), review.getComment(), reviewUserDto);
-            reviewDto.setReviewId(review.getReviewId());
-            return reviewDto;
-        }
-    }
-
-    public ReviewDto addReview(ReviewDto reviewDto, long userId) {
+    public ReviewDto addReview(NewReviewDto newReviewDto, User decodedUser) {
         Book book = new Book();
-        book.setBookId(reviewDto.getBookId());
+        book.setBookId(newReviewDto.getBookId());
 
         User user = new User();
-        user.setUserId(userId);
+        user.setUserId(decodedUser.getUserId());
+        user.setUsername(decodedUser.getUsername());
 
-        Review newReview = new Review(user, book, reviewDto.getRating(), reviewDto.getComment());
+        Review newReview = new Review(user, book, newReviewDto.getRating(), newReviewDto.getComment());
 
         try {
             Review review = reviewRepository.save(newReview);
-            ReviewUserDto reviewUserDto = new ReviewUserDto(review.getUser().getUserId(), review.getUser().getUsername());
-            ReviewDto reviewDto1 = new ReviewDto(review.getBook().getBookId(), review.getRating(), review.getComment(), reviewUserDto);
-            reviewDto1.setReviewId(review.getReviewId());
-            return reviewDto1;
+            return new ReviewDto(review);
         } catch (Exception exception) {
             return null;
         }
     }
 
-    public ApiResponse editReview(ReviewDto reviewDto, long userId, long reviewId) {
+    public ApiResponse editReview(NewReviewDto newReviewDto, long userId, long reviewId) {
         Review prevReview = reviewRepository.findById(reviewId).orElse(null);
 
         if (prevReview == null) {
@@ -82,14 +76,12 @@ public class ReviewService {
             if (prevReview.getUser().getUserId() != userId) {
                 return new ApiResponse(false, null, "Error updating review", 400);
             } else {
-                prevReview.setRating(reviewDto.getRating());
-                prevReview.setComment(reviewDto.getComment());
+                prevReview.setRating(newReviewDto.getRating());
+                prevReview.setComment(newReviewDto.getComment());
 
-                reviewRepository.save(prevReview);
+               Review newReview =  reviewRepository.save(prevReview);
 
-                ReviewUserDto reviewUserDto = new ReviewUserDto(prevReview.getUser().getUserId(), prevReview.getUser().getUsername());
-                ReviewDto reviewDto1 = new ReviewDto(prevReview.getBook().getBookId(), prevReview.getRating(), prevReview.getComment(), reviewUserDto);
-                reviewDto1.setReviewId(prevReview.getReviewId());
+                ReviewDto reviewDto1 = new ReviewDto(newReview);
                 return new ApiResponse(true, reviewDto1, "Successfully updated review", 200);
             }
         }

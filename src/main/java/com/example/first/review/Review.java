@@ -4,6 +4,9 @@ import com.example.first.authanduser.User;
 import com.example.first.book.Book;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Entity
 @Table(name = "reviews")
 public class Review {
@@ -25,6 +28,9 @@ public class Review {
 
     @Column(name = "comment")
     private String comment;
+
+    @Column(name = "date")
+    private LocalDateTime date = LocalDateTime.now();
 
     public Review() {
     }
@@ -74,5 +80,13 @@ public class Review {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
     }
 }

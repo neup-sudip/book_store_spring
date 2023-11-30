@@ -1,6 +1,10 @@
 package com.example.first.book;
 
+import com.example.first.review.ReviewDto;
+import com.example.first.review.ReviewService;
 import jakarta.persistence.Column;
+
+import java.util.List;
 
 public class BookResDto {
 
@@ -15,6 +19,7 @@ public class BookResDto {
     private double overallRating;
     private long numberOfReviews;
 
+    private List<ReviewDto> reviews;
     public BookResDto() {
     }
 
@@ -109,5 +114,13 @@ public class BookResDto {
 
     public void setNumberOfReviews(long numberOfReviews) {
         this.numberOfReviews = numberOfReviews;
+    }
+
+    public List<ReviewDto> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<ReviewDto> reviews) {
+        this.reviews = reviews;
     }
 }

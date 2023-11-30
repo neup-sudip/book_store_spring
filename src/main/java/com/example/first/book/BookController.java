@@ -28,7 +28,7 @@ public class BookController {
 
     @GetMapping()
     public ApiResponse getBooks(@RequestParam(name = "query", defaultValue = "") String query,
-                                   @RequestParam(name = "page", defaultValue = "1") int page) {
+                                @RequestParam(name = "page", defaultValue = "1") int page) {
 
         List<Book> books = bookService.getBooks(query, page);
         int totalPages = bookService.countBooks(query);
@@ -38,23 +38,27 @@ public class BookController {
             bookIds.add(book.getBookId());
         });
 
-       List<Map<String, Object>> ratings = reviewService.getRatingOfBooks(bookIds);
+        List<Map<String, Object>> ratings = reviewService.getRatingOfBooks(bookIds);
 
-       List<BookResDto> bookResDtos = new ArrayList<>();
+        List<BookResDto> bookResDtos = new ArrayList<>();
 
         for (Book book : books) {
+            boolean added = false;
             for (Map<String, Object> rating : ratings) {
                 Long bookId = (Long) rating.get("book_id");
-                if (book.getBookId() == (bookId)) {
+                if (book.getBookId() == bookId) {
                     float overallRating = Float.parseFloat(rating.get("overall_rating").toString());
                     long numRatings = Long.parseLong(rating.get("num_reviews").toString());
-                    BookResDto bookResDto = new BookResDto( book, overallRating, numRatings);
+                    BookResDto bookResDto = new BookResDto(book, overallRating, numRatings);
                     bookResDtos.add(bookResDto);
+                    added = true;
                     break;
-                }else{
-                    BookResDto bookResDto = new BookResDto( book, 0, 0);
-                    bookResDtos.add(bookResDto);
                 }
+            }
+
+            if (!added) {
+                BookResDto bookResDto = new BookResDto(book, 0, 0);
+                bookResDtos.add(bookResDto);
             }
         }
 
@@ -70,9 +74,11 @@ public class BookController {
             return new ApiResponse(false, null, "Book not found", 200);
         } else {
             Map<String, Object> rating = reviewService.getSingleBookRating(book.getBookId());
+            List<ReviewDto> reviews = reviewService.getAllReviewsByBook(book.getBookId());
             float overallRating = Float.parseFloat(rating.get("overall_rating").toString());
             long numRatings = Long.parseLong(rating.get("num_reviews").toString());
-            BookResDto bookResDto = new BookResDto(book, overallRating,numRatings);
+            BookResDto bookResDto = new BookResDto(book, overallRating, numRatings);
+            bookResDto.setReviews(reviews);
             return new ApiResponse(true, bookResDto, "Book fetched", 200);
         }
     }

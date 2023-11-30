@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 
 public class UserResponseDto {
+    private  long userId;
+
     private String username;
 
     private String email;
@@ -14,10 +16,19 @@ public class UserResponseDto {
     public UserResponseDto() {
     }
 
-    public UserResponseDto(String username, String email, User.ROLE role) {
-        this.username = username;
-        this.email = email;
-        this.role = role;
+    public UserResponseDto(User user) {
+        this.userId = user.getUserId();
+        this.username = user.getUsername();
+        this.email = user.getEmail();
+        this.role = User.ROLE.valueOf(user.getRole());
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {

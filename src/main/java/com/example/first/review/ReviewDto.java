@@ -1,33 +1,41 @@
 package com.example.first.review;
 
+import com.example.first.authanduser.User;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 public class ReviewDto {
 
     private long reviewId;
 
-    @Min(value = 0, message = "Invalid book id")
     private long bookId;
 
-    @Min(value = 0, message = "Rating should be greater than 0")
-    @Max(value = 5, message = "Rating should be less than 6")
     private int rating;
 
     private String comment;
 
-    private ReviewUserDto user;
+    private String username;
+
+    private long userId;
+
+    private LocalDateTime date;
 
     public ReviewDto() {
     }
 
-    public ReviewDto(long bookId, int rating, String comment, ReviewUserDto reviewUserDto) {
-        this.bookId = bookId;
-        this.rating = rating;
-        this.comment = comment;
-        this.user = reviewUserDto;
+    public ReviewDto(Review review) {
+        this.reviewId = review.getReviewId();
+        this.bookId = review.getBook().getBookId();
+        this.rating = review.getRating();
+        this.comment = review.getComment();
+        this.userId = review.getUser().getUserId();
+        this.username = review.getUser().getUsername();
+        this.date = review.getDate();
     }
 
     public long getReviewId() {
@@ -54,7 +62,7 @@ public class ReviewDto {
         this.rating = rating;
     }
 
-    public String getComment(){
+    public String getComment() {
         return comment;
     }
 
@@ -62,11 +70,27 @@ public class ReviewDto {
         this.comment = comment;
     }
 
-    public ReviewUserDto getReviewUserDto() {
-        return user;
+    public String getUsername() {
+        return username;
     }
 
-    public void setReviewUserDto(ReviewUserDto reviewUserDto) {
-        this.user = reviewUserDto;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
     }
 }

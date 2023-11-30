@@ -27,7 +27,7 @@ public class JwtConfig extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        if (request.getServletPath().contains("/api/auth/") || request.getServletPath().contains("/api/books") || (request.getServletPath().contains("/api/reviews") && request.getMethod().equals("GET") )) {
+        if (request.getServletPath().contains("/api/auth/") || request.getServletPath().contains("/api/books")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -89,7 +89,7 @@ public class JwtConfig extends OncePerRequestFilter {
     static Claims decodeToken(String token) {
         try {
             Key key = new SecretKeySpec(secret_key.getBytes(), SignatureAlgorithm.HS256.getJcaName());
-            return  Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException ex) {
             throw new CustomException("Token Expired !");
         } catch (Exception ex) {

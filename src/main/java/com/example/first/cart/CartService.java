@@ -17,6 +17,10 @@ public class CartService {
         this.cartRepository = cartRepository;
     }
 
+    public Cart getCartByUserIdAndBookId(long bookId, long userId){
+        return  cartRepository.findCartByUserIdAndBookId(userId, bookId);
+    }
+
     public List<CartResDto> getBooksFromCart(long userId) {
         List<Cart> cartList = cartRepository.findAllBooksByUser(userId);
         List<CartResDto> cartResDtoList = new ArrayList<>();

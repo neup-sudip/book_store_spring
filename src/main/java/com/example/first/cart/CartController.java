@@ -26,33 +26,36 @@ public class CartController {
 
     @PostMapping("/add")
     public ApiResponse addBookToCart(@RequestBody long bookId, HttpServletRequest request) {
-        Cart newCart = new Cart();
-        Book book = new Book();
-        User user = new User();
-
         User decodedUser = (User) request.getAttribute("user");
-        book.setBookId(bookId);
-        user.setUserId(decodedUser.getUserId());
+        if (cartService.getCartByUserIdAndBookId(bookId, decodedUser.getUserId()) != null) {
+            return new ApiResponse(false, null, "Book already in cart", 400);
+        } else {
+            Cart newCart = new Cart();
+            Book book = new Book();
+            User user = new User();
 
-        newCart.setQuantity(1);
-        newCart.setBook(book);
-        newCart.setUser(user);
-        return new ApiResponse(true, cartService.addBookToCart(newCart), "Book added to cart", 200);
+            book.setBookId(bookId);
+            user.setUserId(decodedUser.getUserId());
+            newCart.setQuantity(1);
+            newCart.setBook(book);
+            newCart.setUser(user);
+            return new ApiResponse(true, cartService.addBookToCart(newCart), "Book added to cart", 200);
+        }
     }
 
     @PutMapping("/edit/{id}")
-    public ApiResponse editCart(@PathVariable long id, @RequestBody int quantity,  HttpServletRequest request) {
+    public ApiResponse editCart(@PathVariable long id, @RequestBody int quantity, HttpServletRequest request) {
         User decodedUser = (User) request.getAttribute("user");
         return cartService.updateCart(id, quantity, decodedUser.getUserId());
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse deleteBookFromCart(@PathVariable long id, HttpServletRequest request)  {
+    public ApiResponse deleteBookFromCart(@PathVariable long id, HttpServletRequest request) {
         User decodedUser = (User) request.getAttribute("user");
         boolean success = cartService.removeBookFromCart(id, decodedUser.getUserId());
-        if(success){
+        if (success) {
             return new ApiResponse(true, null, "Book removed from cart", 200);
-        }else{
+        } else {
             return new ApiResponse(false, null, "Error removing book from cart", 400);
         }
     }

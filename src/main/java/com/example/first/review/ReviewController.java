@@ -18,36 +18,36 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    @GetMapping("/{id}")
-    public ApiResponse getAllReviews(@PathVariable long id){
-        return new ApiResponse(true, reviewService.getAllReviewsByBook(id), "Reviews fetched ", 200);
-    }
-
-    @GetMapping("/get/{id}")
-    public ApiResponse getSingleReview(@PathVariable long id){
-        ReviewDto reviewDto = reviewService.getSingleReview(id);
-        if(reviewDto == null){
-            return new ApiResponse(false, null, "Error fetching review ", 400);
-        }else{
-            return new ApiResponse(true, reviewDto, "Review fetched ", 200);
-        }
-    }
+//    @GetMapping("/{id}")
+//    public ApiResponse getAllReviews(@PathVariable long id){
+//        return new ApiResponse(true, reviewService.getAllReviewsByBook(id), "Reviews fetched ", 200);
+//    }
+//
+//    @GetMapping("/get/{id}")
+//    public ApiResponse getSingleReview(@PathVariable long id){
+//        ReviewDto reviewDto = reviewService.getSingleReview(id);
+//        if(reviewDto == null){
+//            return new ApiResponse(false, null, "Error fetching review ", 400);
+//        }else{
+//            return new ApiResponse(true, reviewDto, "Review fetched ", 200);
+//        }
+//    }
 
     @PostMapping()
-    public ApiResponse addReview(@Valid @RequestBody ReviewDto reviewDto, HttpServletRequest request){
+    public ApiResponse addReview(@Valid @RequestBody NewReviewDto newReviewDto, HttpServletRequest request){
         User decodedUser = (User) request.getAttribute("user");
 
         Review prevReview = reviewService.getReviewByUserId(decodedUser.getUserId());
 
         if(prevReview == null){
-            ReviewDto newReview = reviewService.addReview(reviewDto, decodedUser.getUserId());
+            ReviewDto newReview = reviewService.addReview(newReviewDto, decodedUser);
             if(newReview == null){
                 return new ApiResponse(false, null, "Error adding review", 400);
             }else{
                 return new ApiResponse(true, newReview, "Review added", 200);
             }
         }else{
-            return reviewService.editReview(reviewDto, decodedUser.getUserId(), prevReview.getReviewId());
+            return reviewService.editReview(newReviewDto, decodedUser.getUserId(), prevReview.getReviewId());
         }
     }
 

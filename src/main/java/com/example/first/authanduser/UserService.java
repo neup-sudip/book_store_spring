@@ -23,7 +23,7 @@ public class UserService {
         List<User> users = userRepository.findAll(Sort.by("userId"));
         List<UserResponseDto> resUsers = new ArrayList<>();
         for (User user : users) {
-            resUsers.add(new UserResponseDto(user.getUsername(), user.getEmail(), User.ROLE.valueOf(user.getRole())));
+            resUsers.add(new UserResponseDto(user));
         }
         return resUsers;
     }
@@ -31,8 +31,7 @@ public class UserService {
     public UserResponseDto getUserById(long id) {
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
-            User.ROLE role = User.ROLE.valueOf(user.getRole());
-            return new UserResponseDto(user.getUsername(), user.getEmail(), role);
+            return new UserResponseDto(user);
         } else {
             return null;
         }
@@ -50,9 +49,8 @@ public class UserService {
         }
 
         User newUser = userRepository.save(user);
-        User.ROLE role = User.ROLE.valueOf(newUser.getRole());
 
-        return new UserResponseDto(newUser.getUsername(), newUser.getEmail(), role);
+        return new UserResponseDto(newUser);
     }
 
     public ApiResponse updateUser(User user, long id) {
@@ -72,8 +70,7 @@ public class UserService {
         prevUser.setPassword(user.getPassword());
         User newUser = userRepository.save(prevUser);
 
-        User.ROLE role = User.ROLE.valueOf(newUser.getRole());
-        UserResponseDto responseDto = new UserResponseDto(newUser.getUsername(), newUser.getEmail(), role);
+        UserResponseDto responseDto = new UserResponseDto(newUser);
         return new ApiResponse(true, responseDto, "User updated successfully !", 200);
     }
 

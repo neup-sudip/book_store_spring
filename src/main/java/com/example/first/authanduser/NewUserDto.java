@@ -23,8 +23,8 @@ public class NewUserDto {
     @Pattern(regexp = "^(ADMIN|USER)$", message = "Invalid user type !")
     private String role;
 
-    public NewUserDto() {
-    }
+//    public NewUserDto() {
+//    }
 
     public NewUserDto(String username, String password, String email, String role) {
         this.username = username;

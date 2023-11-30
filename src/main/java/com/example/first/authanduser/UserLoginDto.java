@@ -15,8 +15,8 @@ public class UserLoginDto {
     private String password;
 
 
-    public UserLoginDto() {
-    }
+//    public UserLoginDto() {
+//    }
 
     public UserLoginDto(String username, String password) {
         this.username = username;
