@@ -9,7 +9,7 @@ import java.util.Map;
 public interface BookRepository extends JpaRepository<Book, Long> {
     Book findBySlug(String slug);
 
-    @Query(value = "SELECT * FROM books b WHERE b.title ~* :searchTerm OR b.author ~* :searchTerm OR b.genre ~* :searchTerm LIMIT :limit OFFSET :offset", nativeQuery = true)
+    @Query(value = "SELECT * FROM books b WHERE b.title ~* :searchTerm OR b.author ~* :searchTerm OR b.genre ~* :searchTerm OR b.detail ~* :searchTerm LIMIT :limit OFFSET :offset", nativeQuery = true)
     List<Book> searchBooks(String searchTerm, int offset, int limit);
 
     @Query(value = "SELECT COUNT(*) FROM books b WHERE b.title ~* :searchTerm OR b.author ~* :searchTerm OR b.genre ~* :searchTerm", nativeQuery = true)
