@@ -21,7 +21,6 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
-
     public Book getBookBySlug(String slug) {
         return bookRepository.findBySlug(slug);
     }

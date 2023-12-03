@@ -3,8 +3,10 @@ package com.example.first.order;
 import com.example.first.cart.Cart;
 import com.example.first.cart.CartRepository;
 import com.example.first.utils.ApiResponse;
+import com.example.first.utils.CustomException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +31,16 @@ public class OrderService {
         return orderRepository.getOrdersByUser(userId);
     }
 
-    public List<Order> getAllOrders(){
-        return orderRepository.findAll(Sort.by("date"));
+    public List<Order> getAllOrders(String sortBy, int orderBy) {
+        try {
+            if (orderBy == 1) {
+                return orderRepository.findAll(Sort.by(sortBy).ascending());
+            } else {
+                return orderRepository.findAll(Sort.by(sortBy).descending());
+            }
+        } catch (Exception exception) {
+            throw new CustomException("Error fetching order");
+        }
     }
 
     @Transactional
@@ -49,7 +59,7 @@ public class OrderService {
                 orderRepository.saveAll(orderList);
                 cartRepository.deleteAll(cartList);
                 return new ApiResponse(true, null, "Order Placed successfully", 200);
-            } catch (Exception exception) {
+            } catch (DataAccessException exception) {
                 return new ApiResponse(false, null, "Error placing order", 500);
             }
         }
@@ -64,11 +74,9 @@ public class OrderService {
             order.setStatus(status);
             order.setUpdatedOn(LocalDateTime.now());
             orderRepository.save(order);
-            return new ApiResponse(false, null, "Order updated successfully", 200);
+            return new ApiResponse(true, null, "Order updated successfully", 200);
         }
     }
-
-
 
 
 }

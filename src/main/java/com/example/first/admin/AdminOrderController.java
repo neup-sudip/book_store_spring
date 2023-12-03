@@ -16,13 +16,15 @@ public class AdminOrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping()
-    public ApiResponse getAllOrders(){
-        return new ApiResponse(true, orderService.getAllOrders(), "All orders fetched", 200);
+    @GetMapping()
+    public ApiResponse getAllOrders(@RequestParam(name = "sort", defaultValue = "date") String sort,
+                                    @RequestParam(name = "order", defaultValue = "1") int order) {
+        return new ApiResponse(true, orderService.getAllOrders(sort, order), "All orders fetched", 200);
     }
 
     @PutMapping("/{orderId}")
-    public ApiResponse updateOrderStatus(@PathVariable long orderId, @RequestBody String status){
-        return  orderService.updateOrderStatus(orderId, status);
+    public ApiResponse updateOrderStatus(@PathVariable long orderId, @RequestBody String status) {
+        String statusStr = status.replaceAll("\"", "");
+        return orderService.updateOrderStatus(orderId, statusStr);
     }
 }

@@ -27,6 +27,8 @@ public class Order {
     @Column(name = "quantity")
     private int quantity;
 
+    @Column(name = "price")
+    private double price;
 
     @Column(name = "total_price")
     private double totalPrice;
@@ -47,17 +49,19 @@ public class Order {
         this.user = cart.getUser();
         this.book = cart.getBook();
         this.quantity = cart.getQuantity();
+        this.price = cart.getBook().getPrice();
         this.totalPrice = cart.getQuantity() * cart.getBook().getPrice();
         this.status = "processing";
         this.updatedOn = LocalDateTime.now();
     }
 
-    public Order(User user, Book book, int quantity, double totalPrice, LocalDateTime date, String status, LocalDateTime updatedOn) {
+    public Order(User user, Book book, int quantity, double totalPrice, String status, LocalDateTime updatedOn) {
         this.user = user;
         this.book = book;
         this.quantity = quantity;
+        this.price = book.getPrice();
         this.totalPrice = totalPrice;
-        this.date = date;
+        this.date =  LocalDateTime.now();
         this.status = status;
         this.updatedOn = updatedOn;
     }
@@ -92,6 +96,14 @@ public class Order {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public double getTotalPrice() {

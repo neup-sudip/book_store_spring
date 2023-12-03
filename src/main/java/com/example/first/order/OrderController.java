@@ -21,13 +21,17 @@ public class OrderController {
     }
 
     @PostMapping()
-    public ApiResponse placeOrder(HttpServletRequest request){
+    public ApiResponse placeOrder(HttpServletRequest request) {
         User decodedUser = (User) request.getAttribute("user");
-        return orderService.placeOrder(decodedUser.getUserId());
+        try {
+            return orderService.placeOrder(decodedUser.getUserId());
+        } catch (Exception exception) {
+            return new ApiResponse(false, null, "Error placing orders ", 500);
+        }
     }
 
     @GetMapping()
-    public ApiResponse getOrdersByUser(HttpServletRequest request){
+    public ApiResponse getOrdersByUser(HttpServletRequest request) {
         User decodedUser = (User) request.getAttribute("user");
         List<Order> orderList = orderService.getOrdersByUser(decodedUser.getUserId());
         return new ApiResponse(true, orderList, "Orders fetched", 200);
