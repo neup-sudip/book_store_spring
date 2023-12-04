@@ -31,8 +31,8 @@ public class ReviewService {
         return reviewDtoList;
     }
 
-    public Review getReviewByUserId(long userId){
-        return reviewRepository.getReviewByUserId(userId);
+    public Review getReviewByUserIdAndBookId(long userId, long bookId){
+        return reviewRepository.getReviewByUserIdAndBookId(userId, bookId);
     }
 
 //    public ReviewDto getSingleReview(long reviewId) {

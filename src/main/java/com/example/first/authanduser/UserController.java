@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,21 +22,21 @@ public class UserController {
     }
 
     @PostMapping("/auth/register")
-    public ApiResponse createUser(@Valid @RequestBody NewUserDto newUserDto) {
+    public ResponseEntity<ApiResponse> createUser(@Valid @RequestBody NewUserDto newUserDto) {
         User newUser = new User(newUserDto.getUsername(), newUserDto.getPassword(), newUserDto.getEmail(), "USER");
 
         UserResponseDto user = userService.addNewUser(newUser);
 
-        return new ApiResponse(true, user, "User created successfully !", 200);
+        ApiResponse apiResponse = new ApiResponse(true, user, "User created successfully !", 200);
+        return ResponseEntity.status(200).body(apiResponse);
     }
 
     @PostMapping("/auth/login")
-    public ApiResponse loginUser(@Valid @RequestBody UserLoginDto user, HttpServletResponse response) {
+    public ResponseEntity<ApiResponse> loginUser(@Valid @RequestBody UserLoginDto user, HttpServletResponse response) {
         User returnUser = userService.login(user.getUsername(), user.getPassword());
         if (returnUser != null) {
             JwtConfig jwtConfig = new JwtConfig();
-            returnUser.setPassword("");
-            String token = jwtConfig.generateToken(returnUser);
+            String token = jwtConfig.generateToken(new UserResponseDto(returnUser));
 
             final Cookie cookie = new Cookie("auth", token);
             cookie.setSecure(false);
@@ -44,40 +45,48 @@ public class UserController {
             cookie.setPath("/api");
             response.addCookie(cookie);
 
-            return new ApiResponse(true, token, "user success", 200);
+            ApiResponse apiResponse = new ApiResponse(true, token, "user success", 200);
+            return ResponseEntity.status(200).body(apiResponse);
         } else {
-            return new ApiResponse(false, null, "user not found", 400);
+            ApiResponse apiResponse = new ApiResponse(false, null, "user not found", 400);
+            return ResponseEntity.status(400).body(apiResponse);
         }
     }
 
     @GetMapping("/users/profile")
-    public ApiResponse getProfile(HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> getProfile(HttpServletRequest request) {
         User decodedUser = (User) request.getAttribute("user");
         UserResponseDto user = userService.getUserById(decodedUser.getUserId());
         if (user == null) {
-            return new ApiResponse(true, null, "Error fetching user", 400);
+
+            ApiResponse apiResponse =  new ApiResponse(true, null, "Error fetching user", 400);
+            return ResponseEntity.status(400).body(apiResponse);
         } else {
-            return new ApiResponse(true, user, "User fetched successfully", 200);
+            ApiResponse apiResponse = new ApiResponse(true, user, "User fetched successfully", 200);
+            return ResponseEntity.status(200).body(apiResponse);
         }
     }
 
     @GetMapping("/users/edit")
-    public ApiResponse getEditUser(HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> getEditUser(HttpServletRequest request) {
         User decodedUser = (User) request.getAttribute("user");
         User user = userService.getUserByIdNonDto(decodedUser.getUserId());
         if (user == null) {
-            return new ApiResponse(true, null, "Error fetching user", 400);
+            ApiResponse apiResponse = new ApiResponse(true, null, "Error fetching user", 400);
+            return ResponseEntity.status(400).body(apiResponse);
         } else {
-            return new ApiResponse(true, user, "User fetched successfully", 200);
+            ApiResponse apiResponse = new ApiResponse(true, user, "User fetched successfully", 200);
+            return ResponseEntity.status(200).body(apiResponse);
         }
     }
 
     @PutMapping("/users/edit/{id}")
-    public ApiResponse editUser(@RequestBody NewUserDto newUserDto, @PathVariable long id, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> editUser(@RequestBody NewUserDto newUserDto, @PathVariable long id, HttpServletRequest request) {
         User decodedUser = (User) request.getAttribute("user");
 
         if (decodedUser.getUserId() != id) {
-            return new ApiResponse(false, null, "Error updating user", 400);
+            ApiResponse apiResponse = new ApiResponse(false, null, "Error updating user", 400);
+            return ResponseEntity.status(400).body(apiResponse);
         } else {
             User user = new User(newUserDto.getUsername(), newUserDto.getPassword(), newUserDto.getEmail(), "USER");
             return userService.updateUser(user, id);

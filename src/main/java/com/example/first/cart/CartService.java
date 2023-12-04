@@ -2,6 +2,7 @@ package com.example.first.cart;
 
 import com.example.first.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class CartService {
         return new CartResDto(newCart.getCartId(), newCart.getBook(), newCart.getQuantity());
     }
 
-    public ApiResponse updateCart(long cartId, int quantity, long userId){
+    public ResponseEntity<ApiResponse> updateCart(long cartId, int quantity, long userId){
         Cart prevCart = cartRepository.findById(cartId).orElse(null);
         if (prevCart != null && prevCart.getUser().getUserId() == userId) {
 
@@ -43,9 +44,11 @@ public class CartService {
             Cart cart = cartRepository.save(prevCart);
             CartResDto cartResDto = new CartResDto(cart.getCartId(), cart.getBook(), cart.getQuantity());
 
-            return new ApiResponse(true, cartResDto, "Cart updated successfully", 200);
+            ApiResponse apiResponse = new ApiResponse(true, cartResDto, "Cart updated successfully", 200);
+            return ResponseEntity.status(200).body(apiResponse);
         } else {
-            return new ApiResponse(false, null, "Error updating cart", 400);
+            ApiResponse apiResponse = new ApiResponse(false, null, "Error updating cart", 400);
+            return ResponseEntity.status(400).body(apiResponse);
         }
     }
 

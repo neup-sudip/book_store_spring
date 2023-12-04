@@ -4,6 +4,7 @@ import com.example.first.utils.ApiResponse;
 import com.example.first.utils.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public class BookService {
 
     private final BookRepository bookRepository;
 
-    private final int totalBooksPerPage = 4;
+    private final int totalBooksPerPage = 1;
 
     @Autowired
     public BookService(BookRepository bookRepository) {
@@ -51,12 +52,13 @@ public class BookService {
         }
     }
 
-    public ApiResponse updateBook(Book book, long id) {
+    public ResponseEntity<ApiResponse> updateBook(Book book, long id) {
         try{
             Book prevBook = bookRepository.findById(id).orElse(null);
 
             if (prevBook == null) {
-                return new ApiResponse(false, null, "Book not found !", 400);
+                ApiResponse apiResponse = new ApiResponse(false, null, "Book not found !", 400);
+                return ResponseEntity.status(400).body(apiResponse);
             }
 
             prevBook.setTitle(book.getTitle());
@@ -68,7 +70,8 @@ public class BookService {
             prevBook.setAvailable(book.isAvailable());
             bookRepository.save(prevBook);
 
-            return new ApiResponse(true, prevBook, "Book updated successfully !", 200);
+            ApiResponse apiResponse = new ApiResponse(true, prevBook, "Book updated successfully !", 200);
+            return ResponseEntity.status(200).body(apiResponse);
         }catch (Exception exception){
             throw new CustomException("Error while updating book !");
         }

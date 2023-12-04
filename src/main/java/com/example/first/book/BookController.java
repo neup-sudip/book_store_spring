@@ -5,6 +5,7 @@ import com.example.first.review.ReviewService;
 import com.example.first.utils.ApiResponse;
 import jakarta.persistence.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -27,8 +28,8 @@ public class BookController {
     }
 
     @GetMapping()
-    public ApiResponse getBooks(@RequestParam(name = "query", defaultValue = "") String query,
-                                @RequestParam(name = "page", defaultValue = "1") int page) {
+    public ResponseEntity<ApiResponse> getBooks(@RequestParam(name = "query", defaultValue = "") String query,
+                                                @RequestParam(name = "page", defaultValue = "1") int page) {
 
         List<Book> books = bookService.getBooks(query, page);
         int totalPages = bookService.countBooks(query);
@@ -63,15 +64,16 @@ public class BookController {
         }
 
         BookPaginationRes bookPaginationRes = new BookPaginationRes(bookResDtos, totalPages);
-
-        return new ApiResponse(true, bookPaginationRes, "Books fetched successfully", 200);
+        ApiResponse apiResponse = new ApiResponse(true, bookPaginationRes, "Books fetched successfully", 200);
+        return ResponseEntity.status(200).body(apiResponse);
     }
 
     @GetMapping("/{slug}")
-    public ApiResponse getBookBySlug(@PathVariable String slug) {
+    public ResponseEntity<ApiResponse> getBookBySlug(@PathVariable String slug) {
         Book book = bookService.getBookBySlug(slug);
         if (book == null) {
-            return new ApiResponse(false, null, "Book not found", 200);
+            ApiResponse apiResponse = new ApiResponse(false, null, "Book not found", 400);
+            return ResponseEntity.status(400).body(apiResponse);
         } else {
             Map<String, Object> rating = reviewService.getSingleBookRating(book.getBookId());
             List<ReviewDto> reviews = reviewService.getAllReviewsByBook(book.getBookId());
@@ -79,7 +81,8 @@ public class BookController {
             long numRatings = Long.parseLong(rating.get("num_reviews").toString());
             BookResDto bookResDto = new BookResDto(book, overallRating, numRatings);
             bookResDto.setReviews(reviews);
-            return new ApiResponse(true, bookResDto, "Book fetched", 200);
+            ApiResponse apiResponse = new ApiResponse(true, bookResDto, "Book fetched", 200);
+            return ResponseEntity.status(200).body(apiResponse);
         }
     }
 }

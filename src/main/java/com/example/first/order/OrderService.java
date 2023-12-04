@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -44,11 +45,12 @@ public class OrderService {
     }
 
     @Transactional
-    public ApiResponse placeOrder(long userId) {
+    public ResponseEntity<ApiResponse> placeOrder(long userId) {
         List<Cart> cartList = cartRepository.findAllBooksByUser(userId);
 
         if (cartList == null) {
-            return new ApiResponse(false, null, "No item to place order", 400);
+            ApiResponse apiResponse = new ApiResponse(false, null, "No item to place order", 400);
+            return ResponseEntity.status(400).body(apiResponse);
         } else {
             List<Order> orderList = new ArrayList<>();
             for (Cart cart : cartList) {
@@ -58,23 +60,27 @@ public class OrderService {
             try {
                 orderRepository.saveAll(orderList);
                 cartRepository.deleteAll(cartList);
-                return new ApiResponse(true, null, "Order Placed successfully", 200);
+                ApiResponse apiResponse = new ApiResponse(true, null, "Order Placed successfully", 200);
+                return ResponseEntity.status(200).body(apiResponse);
             } catch (DataAccessException exception) {
-                return new ApiResponse(false, null, "Error placing order", 500);
+                ApiResponse apiResponse = new ApiResponse(false, null, "Error placing order", 500);
+                return ResponseEntity.status(500).body(apiResponse);
             }
         }
     }
 
-    public ApiResponse updateOrderStatus(long orderId, String status) {
+    public ResponseEntity<ApiResponse> updateOrderStatus(long orderId, String status) {
         Order order = orderRepository.findById(orderId).orElse(null);
 
         if (order == null) {
-            return new ApiResponse(false, null, "Can not find order at the moment", 400);
+            ApiResponse apiResponse  = new ApiResponse(false, null, "Can not find order at the moment", 400);
+            return ResponseEntity.status(400).body(apiResponse);
         } else {
             order.setStatus(status);
             order.setUpdatedOn(LocalDateTime.now());
             orderRepository.save(order);
-            return new ApiResponse(true, null, "Order updated successfully", 200);
+            ApiResponse apiResponse = new ApiResponse(true, null, "Order updated successfully", 200);
+            return ResponseEntity.status(200).body(apiResponse);
         }
     }
 

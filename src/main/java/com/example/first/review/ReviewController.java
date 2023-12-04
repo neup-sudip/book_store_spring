@@ -37,7 +37,7 @@ public class ReviewController {
     public ApiResponse addReview(@Valid @RequestBody NewReviewDto newReviewDto, HttpServletRequest request){
         User decodedUser = (User) request.getAttribute("user");
 
-        Review prevReview = reviewService.getReviewByUserId(decodedUser.getUserId());
+        Review prevReview = reviewService.getReviewByUserIdAndBookId(decodedUser.getUserId(), newReviewDto.getBookId());
 
         if(prevReview == null){
             ReviewDto newReview = reviewService.addReview(newReviewDto, decodedUser);

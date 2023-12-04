@@ -21,9 +21,7 @@ public class SecurityConfiguration {
                 .cors(c -> c.configurationSource(corsFilter()))
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/**").permitAll()
-                        .anyRequest().authenticated())
-
-        ;
+                        .anyRequest().authenticated());
 
         http.addFilterBefore(new JwtConfig(), UsernamePasswordAuthenticationFilter.class);
         return http.build();

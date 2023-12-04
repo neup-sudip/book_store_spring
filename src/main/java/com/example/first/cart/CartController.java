@@ -5,6 +5,7 @@ import com.example.first.authanduser.User;
 import com.example.first.utils.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,16 +20,18 @@ public class CartController {
     }
 
     @GetMapping()
-    public ApiResponse getAllBooks(HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> getAllBooks(HttpServletRequest request) {
         User user = (User) request.getAttribute("user");
-        return new ApiResponse(true, cartService.getBooksFromCart(user.getUserId()), "Cart fetched successfully", 200);
+        ApiResponse apiResponse = new ApiResponse(true, cartService.getBooksFromCart(user.getUserId()), "Cart fetched successfully", 200);
+        return ResponseEntity.status(200).body(apiResponse);
     }
 
     @PostMapping("/add")
-    public ApiResponse addBookToCart(@RequestBody long bookId, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> addBookToCart(@RequestBody long bookId, HttpServletRequest request) {
         User decodedUser = (User) request.getAttribute("user");
         if (cartService.getCartByUserIdAndBookId(bookId, decodedUser.getUserId()) != null) {
-            return new ApiResponse(false, null, "Book already in cart", 400);
+            ApiResponse apiResponse = new ApiResponse(false, null, "Book already in cart", 400);
+            return ResponseEntity.status(400).body(apiResponse);
         } else {
             Cart newCart = new Cart();
             Book book = new Book();
@@ -39,24 +42,27 @@ public class CartController {
             newCart.setQuantity(1);
             newCart.setBook(book);
             newCart.setUser(user);
-            return new ApiResponse(true, cartService.addBookToCart(newCart), "Book added to cart", 200);
+            ApiResponse apiResponse = new ApiResponse(true, cartService.addBookToCart(newCart), "Book added to cart", 200);
+            return ResponseEntity.status(200).body(apiResponse);
         }
     }
 
     @PutMapping("/edit/{id}")
-    public ApiResponse editCart(@PathVariable long id, @RequestBody int quantity, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> editCart(@PathVariable long id, @RequestBody int quantity, HttpServletRequest request) {
         User decodedUser = (User) request.getAttribute("user");
         return cartService.updateCart(id, quantity, decodedUser.getUserId());
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse deleteBookFromCart(@PathVariable long id, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> deleteBookFromCart(@PathVariable long id, HttpServletRequest request) {
         User decodedUser = (User) request.getAttribute("user");
         boolean success = cartService.removeBookFromCart(id, decodedUser.getUserId());
         if (success) {
-            return new ApiResponse(true, null, "Book removed from cart", 200);
+            ApiResponse apiResponse = new ApiResponse(true, null, "Book removed from cart", 200);
+            return ResponseEntity.status(200).body(apiResponse);
         } else {
-            return new ApiResponse(false, null, "Error removing book from cart", 400);
+            ApiResponse apiResponse = new ApiResponse(false, null, "Error removing book from cart", 400);
+            return ResponseEntity.status(400).body(apiResponse);
         }
     }
 

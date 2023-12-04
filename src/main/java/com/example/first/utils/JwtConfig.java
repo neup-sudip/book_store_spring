@@ -1,6 +1,7 @@
 package com.example.first.utils;
 
 import com.example.first.authanduser.User;
+import com.example.first.authanduser.UserResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
@@ -46,6 +47,7 @@ public class JwtConfig extends OncePerRequestFilter {
             ObjectMapper objectMapper = new ObjectMapper();
             ApiResponse apiResponse = new ApiResponse(false, null, e.getMessage(), 401);
             response.setContentType("application/json");
+            response.setStatus(401);
             response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
         }
     }
@@ -74,7 +76,7 @@ public class JwtConfig extends OncePerRequestFilter {
         return decodeToken(token).getExpiration().before(new Date(System.currentTimeMillis()));
     }
 
-    public String generateToken(User user) {
+    public String generateToken(UserResponseDto user) {
         Key key = new SecretKeySpec(secret_key.getBytes(), SignatureAlgorithm.HS256.getJcaName());
 
         return Jwts.builder()

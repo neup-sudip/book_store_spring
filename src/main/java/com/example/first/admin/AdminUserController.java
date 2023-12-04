@@ -5,6 +5,7 @@ import com.example.first.authanduser.UserResponseDto;
 import com.example.first.authanduser.UserService;
 import com.example.first.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,24 +20,26 @@ public class AdminUserController {
     }
 
     @GetMapping()
-    public ApiResponse getAllUsers() {
-        return new ApiResponse(true, userService.getUsers(), "All users fetched", 200);
+    public ResponseEntity<ApiResponse> getAllUsers() {
+        ApiResponse apiResponse = new ApiResponse(true, userService.getUsers(), "All users fetched", 200);
+        return ResponseEntity.status(200).body(apiResponse);
     }
 
     @GetMapping("/{id}")
-    public ApiResponse getUserById(@PathVariable long id) {
+    public ResponseEntity<ApiResponse> getUserById(@PathVariable long id) {
         UserResponseDto user = userService.getUserById(id);
 
         if (user == null) {
-            return new ApiResponse(false, null, "User not found !", 400);
+            ApiResponse apiResponse = new ApiResponse(false, null, "User not found !", 400);
+            return ResponseEntity.status(400).body(apiResponse);
         } else {
-
-            return new ApiResponse(true, user, "User fetched successfully", 200);
+            ApiResponse apiResponse = new ApiResponse(true, user, "User fetched successfully", 200);
+            return ResponseEntity.status(200).body(apiResponse);
         }
     }
 
     @PutMapping("/{id}")
-    public ApiResponse updateUser(@PathVariable long id, @RequestBody User user) {
+    public ResponseEntity<ApiResponse> updateUser(@PathVariable long id, @RequestBody User user) {
         return userService.updateUser(user, id);
     }
 }

@@ -4,6 +4,7 @@ import com.example.first.utils.ApiResponse;
 import com.example.first.utils.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -53,15 +54,17 @@ public class UserService {
         return new UserResponseDto(newUser);
     }
 
-    public ApiResponse updateUser(User user, long id) {
+    public ResponseEntity<ApiResponse> updateUser(User user, long id) {
         User prevUser = userRepository.findById(id).orElse(null);
         if (prevUser == null) {
-            return new ApiResponse(false, null, "User not found !", 400);
+            ApiResponse apiResponse = new ApiResponse(false, null, "User not found !", 400);
+            return ResponseEntity.status(400).body(apiResponse);
         }
 
         User emailOrUsernameExist = userRepository.findByNotIdAndEmailOrUsername(id, user.getEmail(), user.getUsername());
         if (emailOrUsernameExist != null) {
-            return new ApiResponse(false, null, "Email/Username already exist !", 400);
+            ApiResponse apiResponse = new ApiResponse(false, null, "Email/Username already exist !", 400);
+            return ResponseEntity.status(400).body(apiResponse);
         }
 
         prevUser.setRole(user.getRole());
@@ -71,7 +74,8 @@ public class UserService {
         User newUser = userRepository.save(prevUser);
 
         UserResponseDto responseDto = new UserResponseDto(newUser);
-        return new ApiResponse(true, responseDto, "User updated successfully !", 200);
+        ApiResponse apiResponse = new ApiResponse(true, responseDto, "User updated successfully !", 200);
+        return ResponseEntity.status(200).body(apiResponse);
     }
 
     public User login(String username, String password) {
