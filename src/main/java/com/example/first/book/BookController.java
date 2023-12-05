@@ -30,7 +30,6 @@ public class BookController {
     @GetMapping()
     public ResponseEntity<ApiResponse> getBooks(@RequestParam(name = "query", defaultValue = "") String query,
                                                 @RequestParam(name = "page", defaultValue = "1") int page) {
-
         List<Book> books = bookService.getBooks(query, page);
         int totalPages = bookService.countBooks(query);
 

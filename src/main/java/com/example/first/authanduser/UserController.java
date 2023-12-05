@@ -58,7 +58,6 @@ public class UserController {
         User decodedUser = (User) request.getAttribute("user");
         UserResponseDto user = userService.getUserById(decodedUser.getUserId());
         if (user == null) {
-
             ApiResponse apiResponse =  new ApiResponse(true, null, "Error fetching user", 400);
             return ResponseEntity.status(400).body(apiResponse);
         } else {

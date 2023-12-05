@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    @Query(value = "SELECT * FROM orders WHERE user_id = :userId", nativeQuery = true)
+    @Query(value = "SELECT * FROM orders WHERE user_id = :userId ORDER BY date DESC", nativeQuery = true)
     List<Order> getOrdersByUser(long userId);
 }
