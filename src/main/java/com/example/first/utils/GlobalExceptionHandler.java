@@ -14,9 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-//    @Override
+    //    @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
                                                                   HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         Map<String, String> errors = new HashMap<>();
@@ -27,12 +27,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  {
             errors.put(errorTitle, errorMessage);
         });
 
-        return  ResponseEntity.badRequest().body(new ApiResponse(false, errors, "Error !", 400)) ;
+        return ResponseEntity.badRequest().body(new ApiResponse(false, errors, "Error !", 400));
     }
 
     @ExceptionHandler(CustomException.class)
-    public ApiResponse handleCustomException(CustomException exception){
-        return new ApiResponse( false, null, exception.getMessage(),  400);
+    public ResponseEntity<ApiResponse> handleCustomException(CustomException exception) {
+        ApiResponse apiResponse = new ApiResponse(false, null, exception.getMessage(), 400);
+        return ResponseEntity.status(400).body(apiResponse);
     }
 
 //    @ExceptionHandler(Exception.class)
