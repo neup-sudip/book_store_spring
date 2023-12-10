@@ -42,9 +42,9 @@ public class ReviewController {
         if(prevReview == null){
             ReviewDto newReview = reviewService.addReview(newReviewDto, decodedUser);
             if(newReview == null){
-                return new ApiResponse(false, null, "Error adding review", 400);
+                return new ApiResponse(false, null, "Error adding review");
             }else{
-                return new ApiResponse(true, newReview, "Review added", 200);
+                return new ApiResponse(true, newReview, "Review added");
             }
         }else{
             return reviewService.editReview(newReviewDto, decodedUser.getUserId(), prevReview.getReviewId());

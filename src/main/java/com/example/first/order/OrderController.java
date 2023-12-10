@@ -27,7 +27,7 @@ public class OrderController {
         try {
             return orderService.placeOrder(decodedUser.getUserId());
         } catch (Exception exception) {
-            ApiResponse apiResponse = new ApiResponse(false, null, "Error placing orders ", 500);
+            ApiResponse apiResponse = new ApiResponse(false, null, "Error placing orders ");
             return ResponseEntity.status(500).body(apiResponse);
         }
     }
@@ -36,7 +36,7 @@ public class OrderController {
     public ResponseEntity<ApiResponse> getOrdersByUser(HttpServletRequest request) {
         User decodedUser = (User) request.getAttribute("user");
         List<Order> orderList = orderService.getOrdersByUser(decodedUser.getUserId());
-        ApiResponse apiResponse =  new ApiResponse(true, orderList, "Orders fetched", 200);
+        ApiResponse apiResponse =  new ApiResponse(true, orderList, "Orders fetched");
         return ResponseEntity.status(200).body(apiResponse);
     }
 }

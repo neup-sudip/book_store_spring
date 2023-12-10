@@ -45,7 +45,7 @@ public class JwtConfig extends OncePerRequestFilter {
         } catch (CustomException e) {
             System.out.println("Custom Error: " + e.getMessage());
             ObjectMapper objectMapper = new ObjectMapper();
-            ApiResponse apiResponse = new ApiResponse(false, null, e.getMessage(), 401);
+            ApiResponse apiResponse = new ApiResponse(false, null, e.getMessage());
             response.setContentType("application/json");
             response.setStatus(401);
             response.getWriter().write(objectMapper.writeValueAsString(apiResponse));

@@ -44,10 +44,10 @@ public class CartService {
             Cart cart = cartRepository.save(prevCart);
             CartResDto cartResDto = new CartResDto(cart.getCartId(), cart.getBook(), cart.getQuantity());
 
-            ApiResponse apiResponse = new ApiResponse(true, cartResDto, "Cart updated successfully", 200);
+            ApiResponse apiResponse = new ApiResponse(true, cartResDto, "Cart updated successfully");
             return ResponseEntity.status(200).body(apiResponse);
         } else {
-            ApiResponse apiResponse = new ApiResponse(false, null, "Error updating cart", 400);
+            ApiResponse apiResponse = new ApiResponse(false, null, "Error updating cart");
             return ResponseEntity.status(400).body(apiResponse);
         }
     }

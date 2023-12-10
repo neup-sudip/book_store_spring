@@ -71,10 +71,10 @@ public class ReviewService {
         Review prevReview = reviewRepository.findById(reviewId).orElse(null);
 
         if (prevReview == null) {
-            return new ApiResponse(false, null, "Can not found review at the moment ", 400);
+            return new ApiResponse(false, null, "Can not found review at the moment ");
         } else {
             if (prevReview.getUser().getUserId() != userId) {
-                return new ApiResponse(false, null, "Error updating review", 400);
+                return new ApiResponse(false, null, "Error updating review");
             } else {
                 prevReview.setRating(newReviewDto.getRating());
                 prevReview.setComment(newReviewDto.getComment());
@@ -82,7 +82,7 @@ public class ReviewService {
                Review newReview =  reviewRepository.save(prevReview);
 
                 ReviewDto reviewDto1 = new ReviewDto(newReview);
-                return new ApiResponse(true, reviewDto1, "Successfully updated review", 200);
+                return new ApiResponse(true, reviewDto1, "Successfully updated review");
             }
         }
 

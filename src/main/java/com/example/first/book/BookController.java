@@ -63,7 +63,7 @@ public class BookController {
         }
 
         BookPaginationRes bookPaginationRes = new BookPaginationRes(bookResDtos, totalPages);
-        ApiResponse apiResponse = new ApiResponse(true, bookPaginationRes, "Books fetched successfully", 200);
+        ApiResponse apiResponse = new ApiResponse(true, bookPaginationRes, "Books fetched successfully");
         return ResponseEntity.status(200).body(apiResponse);
     }
 
@@ -71,7 +71,7 @@ public class BookController {
     public ResponseEntity<ApiResponse> getBookBySlug(@PathVariable String slug) {
         Book book = bookService.getBookBySlug(slug);
         if (book == null) {
-            ApiResponse apiResponse = new ApiResponse(false, null, "Book not found", 400);
+            ApiResponse apiResponse = new ApiResponse(false, null, "Book not found");
             return ResponseEntity.status(400).body(apiResponse);
         } else {
             Map<String, Object> rating = reviewService.getSingleBookRating(book.getBookId());
@@ -80,7 +80,7 @@ public class BookController {
             long numRatings = Long.parseLong(rating.get("num_reviews").toString());
             BookResDto bookResDto = new BookResDto(book, overallRating, numRatings);
             bookResDto.setReviews(reviews);
-            ApiResponse apiResponse = new ApiResponse(true, bookResDto, "Book fetched", 200);
+            ApiResponse apiResponse = new ApiResponse(true, bookResDto, "Book fetched");
             return ResponseEntity.status(200).body(apiResponse);
         }
     }

@@ -49,7 +49,7 @@ public class OrderService {
         List<Cart> cartList = cartRepository.findAllBooksByUser(userId);
 
         if (cartList == null) {
-            ApiResponse apiResponse = new ApiResponse(false, null, "No item to place order", 400);
+            ApiResponse apiResponse = new ApiResponse(false, null, "No item to place order");
             return ResponseEntity.status(400).body(apiResponse);
         } else {
             List<Order> orderList = new ArrayList<>();
@@ -60,10 +60,10 @@ public class OrderService {
             try {
                 orderRepository.saveAll(orderList);
                 cartRepository.deleteAll(cartList);
-                ApiResponse apiResponse = new ApiResponse(true, null, "Order Placed successfully", 200);
+                ApiResponse apiResponse = new ApiResponse(true, null, "Order Placed successfully");
                 return ResponseEntity.status(200).body(apiResponse);
             } catch (DataAccessException exception) {
-                ApiResponse apiResponse = new ApiResponse(false, null, "Error placing order", 500);
+                ApiResponse apiResponse = new ApiResponse(false, null, "Error placing order");
                 return ResponseEntity.status(500).body(apiResponse);
             }
         }
@@ -73,13 +73,13 @@ public class OrderService {
         Order order = orderRepository.findById(orderId).orElse(null);
 
         if (order == null) {
-            ApiResponse apiResponse  = new ApiResponse(false, null, "Can not find order at the moment", 400);
+            ApiResponse apiResponse  = new ApiResponse(false, null, "Can not find order at the moment");
             return ResponseEntity.status(400).body(apiResponse);
         } else {
             order.setStatus(status);
             order.setUpdatedOn(LocalDateTime.now());
             orderRepository.save(order);
-            ApiResponse apiResponse = new ApiResponse(true, null, "Order updated successfully", 200);
+            ApiResponse apiResponse = new ApiResponse(true, null, "Order updated successfully");
             return ResponseEntity.status(200).body(apiResponse);
         }
     }

@@ -57,7 +57,7 @@ public class BookService {
             Book prevBook = bookRepository.findById(id).orElse(null);
 
             if (prevBook == null) {
-                ApiResponse apiResponse = new ApiResponse(false, null, "Book not found !", 400);
+                ApiResponse apiResponse = new ApiResponse(false, null, "Book not found !");
                 return ResponseEntity.status(400).body(apiResponse);
             }
 
@@ -70,7 +70,7 @@ public class BookService {
             prevBook.setAvailable(book.isAvailable());
             bookRepository.save(prevBook);
 
-            ApiResponse apiResponse = new ApiResponse(true, prevBook, "Book updated successfully !", 200);
+            ApiResponse apiResponse = new ApiResponse(true, prevBook, "Book updated successfully !");
             return ResponseEntity.status(200).body(apiResponse);
         }catch (Exception exception){
             throw new CustomException("Error while updating book !");

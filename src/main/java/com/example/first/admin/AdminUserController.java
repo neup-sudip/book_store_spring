@@ -21,7 +21,7 @@ public class AdminUserController {
 
     @GetMapping()
     public ResponseEntity<ApiResponse> getAllUsers() {
-        ApiResponse apiResponse = new ApiResponse(true, userService.getUsers(), "All users fetched", 200);
+        ApiResponse apiResponse = new ApiResponse(true, userService.getUsers(), "All users fetched");
         return ResponseEntity.status(200).body(apiResponse);
     }
 
@@ -30,10 +30,10 @@ public class AdminUserController {
         UserResponseDto user = userService.getUserById(id);
 
         if (user == null) {
-            ApiResponse apiResponse = new ApiResponse(false, null, "User not found !", 400);
+            ApiResponse apiResponse = new ApiResponse(false, null, "User not found !");
             return ResponseEntity.status(400).body(apiResponse);
         } else {
-            ApiResponse apiResponse = new ApiResponse(true, user, "User fetched successfully", 200);
+            ApiResponse apiResponse = new ApiResponse(true, user, "User fetched successfully");
             return ResponseEntity.status(200).body(apiResponse);
         }
     }

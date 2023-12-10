@@ -27,7 +27,7 @@ public class UserController {
 
         UserResponseDto user = userService.addNewUser(newUser);
 
-        ApiResponse apiResponse = new ApiResponse(true, user, "User created successfully !", 200);
+        ApiResponse apiResponse = new ApiResponse(true, user, "User created successfully !");
         return ResponseEntity.status(200).body(apiResponse);
     }
 
@@ -45,10 +45,10 @@ public class UserController {
             cookie.setPath("/api");
             response.addCookie(cookie);
 
-            ApiResponse apiResponse = new ApiResponse(true, token, "user success", 200);
+            ApiResponse apiResponse = new ApiResponse(true, token, "user success");
             return ResponseEntity.status(200).body(apiResponse);
         } else {
-            ApiResponse apiResponse = new ApiResponse(false, null, "user not found", 400);
+            ApiResponse apiResponse = new ApiResponse(false, null, "user not found");
             return ResponseEntity.status(400).body(apiResponse);
         }
     }
@@ -58,10 +58,10 @@ public class UserController {
         User decodedUser = (User) request.getAttribute("user");
         UserResponseDto user = userService.getUserById(decodedUser.getUserId());
         if (user == null) {
-            ApiResponse apiResponse =  new ApiResponse(true, null, "Error fetching user", 400);
+            ApiResponse apiResponse =  new ApiResponse(true, null, "Error fetching user");
             return ResponseEntity.status(400).body(apiResponse);
         } else {
-            ApiResponse apiResponse = new ApiResponse(true, user, "User fetched successfully", 200);
+            ApiResponse apiResponse = new ApiResponse(true, user, "User fetched successfully");
             return ResponseEntity.status(200).body(apiResponse);
         }
     }
@@ -71,10 +71,10 @@ public class UserController {
         User decodedUser = (User) request.getAttribute("user");
         User user = userService.getUserByIdNonDto(decodedUser.getUserId());
         if (user == null) {
-            ApiResponse apiResponse = new ApiResponse(true, null, "Error fetching user", 400);
+            ApiResponse apiResponse = new ApiResponse(true, null, "Error fetching user");
             return ResponseEntity.status(400).body(apiResponse);
         } else {
-            ApiResponse apiResponse = new ApiResponse(true, user, "User fetched successfully", 200);
+            ApiResponse apiResponse = new ApiResponse(true, user, "User fetched successfully");
             return ResponseEntity.status(200).body(apiResponse);
         }
     }
@@ -84,7 +84,7 @@ public class UserController {
         User decodedUser = (User) request.getAttribute("user");
 
         if (decodedUser.getUserId() != id) {
-            ApiResponse apiResponse = new ApiResponse(false, null, "Error updating user", 400);
+            ApiResponse apiResponse = new ApiResponse(false, null, "Error updating user");
             return ResponseEntity.status(400).body(apiResponse);
         } else {
             User user = new User(newUserDto.getUsername(), newUserDto.getPassword(), newUserDto.getEmail(), "USER");

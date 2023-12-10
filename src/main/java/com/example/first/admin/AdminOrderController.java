@@ -20,7 +20,7 @@ public class AdminOrderController {
     @GetMapping()
     public ResponseEntity<ApiResponse> getAllOrders(@RequestParam(name = "sort", defaultValue = "date") String sort,
                                                     @RequestParam(name = "order", defaultValue = "1") int order) {
-        ApiResponse apiResponse = new ApiResponse(true, orderService.getAllOrders(sort, order), "All orders fetched", 200);
+        ApiResponse apiResponse = new ApiResponse(true, orderService.getAllOrders(sort, order), "All orders fetched");
         return ResponseEntity.status(200).body(apiResponse);
     }
 

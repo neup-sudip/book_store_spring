@@ -18,7 +18,7 @@ public class AdminBookController {
 
     @PostMapping()
     public ResponseEntity<ApiResponse> addBook(@RequestBody Book book) {
-        ApiResponse apiResponse = new ApiResponse(true, bookService.addNewBook(book), "Book added successfully", 200);
+        ApiResponse apiResponse = new ApiResponse(true, bookService.addNewBook(book), "Book added successfully");
         return ResponseEntity.status(200).body(apiResponse);
     }
 

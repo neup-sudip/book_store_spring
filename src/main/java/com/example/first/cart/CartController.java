@@ -22,7 +22,7 @@ public class CartController {
     @GetMapping()
     public ResponseEntity<ApiResponse> getAllBooks(HttpServletRequest request) {
         User user = (User) request.getAttribute("user");
-        ApiResponse apiResponse = new ApiResponse(true, cartService.getBooksFromCart(user.getUserId()), "Cart fetched successfully", 200);
+        ApiResponse apiResponse = new ApiResponse(true, cartService.getBooksFromCart(user.getUserId()), "Cart fetched successfully");
         return ResponseEntity.status(200).body(apiResponse);
     }
 
@@ -30,7 +30,7 @@ public class CartController {
     public ResponseEntity<ApiResponse> addBookToCart(@RequestBody long bookId, HttpServletRequest request) {
         User decodedUser = (User) request.getAttribute("user");
         if (cartService.getCartByUserIdAndBookId(bookId, decodedUser.getUserId()) != null) {
-            ApiResponse apiResponse = new ApiResponse(false, null, "Book already in cart", 400);
+            ApiResponse apiResponse = new ApiResponse(false, null, "Book already in cart");
             return ResponseEntity.status(400).body(apiResponse);
         } else {
             Cart newCart = new Cart();
@@ -42,7 +42,7 @@ public class CartController {
             newCart.setQuantity(1);
             newCart.setBook(book);
             newCart.setUser(user);
-            ApiResponse apiResponse = new ApiResponse(true, cartService.addBookToCart(newCart), "Book added to cart", 200);
+            ApiResponse apiResponse = new ApiResponse(true, cartService.addBookToCart(newCart), "Book added to cart");
             return ResponseEntity.status(200).body(apiResponse);
         }
     }
@@ -58,10 +58,10 @@ public class CartController {
         User decodedUser = (User) request.getAttribute("user");
         boolean success = cartService.removeBookFromCart(id, decodedUser.getUserId());
         if (success) {
-            ApiResponse apiResponse = new ApiResponse(true, null, "Book removed from cart", 200);
+            ApiResponse apiResponse = new ApiResponse(true, null, "Book removed from cart");
             return ResponseEntity.status(200).body(apiResponse);
         } else {
-            ApiResponse apiResponse = new ApiResponse(false, null, "Error removing book from cart", 400);
+            ApiResponse apiResponse = new ApiResponse(false, null, "Error removing book from cart");
             return ResponseEntity.status(400).body(apiResponse);
         }
     }
