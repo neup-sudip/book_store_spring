@@ -15,7 +15,7 @@ public class BookService {
 
     private final BookRepository bookRepository;
 
-    private final int totalBooksPerPage = 1;
+    private final int totalBooksPerPage = 2;
 
     @Autowired
     public BookService(BookRepository bookRepository) {

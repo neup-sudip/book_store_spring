@@ -9,6 +9,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -19,10 +23,11 @@ import java.util.Map;
 
 public class JwtConfig extends OncePerRequestFilter {
 
-    private static final String secret_key = "jisdhcinsidhciibcudcguisudbcsjbdcsbdcusblcbsvuslhsbludbcsjdbciusdc" +
-            "7fcn74efnf47fn78888hcb78438fw2b78w84gfb7gfb78sgb78gbuyb7sgcf7b4" +
-            "f73wifbyw7syb4bnc784gfggb78gb7gbw78fgwgfb878wgef78nw3fc87w3fbwgfb" +
-            "cwefcbuwc8ow7e7e4fb8787rvbuoes8r7vuyer87vcuy7wsbyervdjvjdbvjbd";
+    @Autowired
+    private Environment environment;
+
+    @Value("${jwt.secret:mySecret}")
+    private String secretKey;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -43,7 +48,6 @@ public class JwtConfig extends OncePerRequestFilter {
             request.setAttribute("user", user);
             filterChain.doFilter(request, response);
         } catch (CustomException e) {
-            System.out.println("Custom Error: " + e.getMessage());
             ObjectMapper objectMapper = new ObjectMapper();
             ApiResponse apiResponse = new ApiResponse(false, null, e.getMessage());
             response.setContentType("application/json");
@@ -77,7 +81,7 @@ public class JwtConfig extends OncePerRequestFilter {
     }
 
     public String generateToken(UserResponseDto user) {
-        Key key = new SecretKeySpec(secret_key.getBytes(), SignatureAlgorithm.HS256.getJcaName());
+        Key key = new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS256.getJcaName());
 
         return Jwts.builder()
                 .setSubject("auth token")
@@ -88,9 +92,9 @@ public class JwtConfig extends OncePerRequestFilter {
                 .compact();
     }
 
-    static Claims decodeToken(String token) {
+    public Claims decodeToken(String token) {
         try {
-            Key key = new SecretKeySpec(secret_key.getBytes(), SignatureAlgorithm.HS256.getJcaName());
+            Key key = new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS256.getJcaName());
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException ex) {
             throw new CustomException("Token Expired !");
